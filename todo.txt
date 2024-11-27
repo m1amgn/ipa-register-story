@@ -1,0 +1,24 @@
+Create derivative (need approve):
+const derivativeTokenId = await mintNFT(account.address, 'test-uri')
+    const registerIpDerivativeResponse = await client.ipAsset.registerDerivativeIp({
+        nftContract: NFTContractAddress, // an nft contract in my code
+        tokenId: derivativeTokenId!,
+        derivData: {
+            parentIpIds: [registerIpResponse.ipId as Address],
+            licenseTermsIds: [registerIpResponse.licenseTermsId as bigint],
+        },
+        ipMetadata: {
+            ipMetadataURI: 'test-uri',
+            ipMetadataHash: toHex('test-metadata-hash', { size: 32 }),
+            nftMetadataHash: toHex('test-nft-metadata-hash', { size: 32 }),
+            nftMetadataURI: 'test-nft-uri',
+        },
+        txOptions: { waitForTransaction: true },
+    })
+    console.log(
+        `Derivative IPA created at transaction hash ${registerIpDerivativeResponse.txHash}, IPA ID: ${registerIpDerivativeResponse.ipId}`
+    )
+
+Add API KEYS for api get requests
+
+royaltyPolicy
