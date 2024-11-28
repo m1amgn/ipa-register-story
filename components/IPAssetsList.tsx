@@ -32,13 +32,13 @@ interface IPAssetsListProps {
 
 const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
   const [ipAssets, setIpAssets] = useState<IPAsset[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [showCommercialOnly, setShowCommercialOnly] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (address) fetchNFTContract();
+    if (address) {
+      fetchNFTContract();
+    }
   }, [address]);
 
   const fetchNFTContract = async () => {
@@ -47,10 +47,10 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
       if (nftContract) {
         await fetchIPAssets(nftContract);
       } else {
-        handleError("No NFT collection found.");
+        console.error("Can't find NFT collection.");
       }
     } catch (error) {
-      handleError("Error fetching NFT contract. Please try again.", error);
+      console.error("Error in fetching NFT contract", error);
     }
   };
 
@@ -63,22 +63,36 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
       const tokensQuantity = Number(tokensQuantityBigInt);
 
       if (!tokensQuantity) {
-        throw new Error("Invalid tokens quantity on your contract.");
+        throw new Error("There is no token in NFT contract");
       }
 
-      const assets = await Promise.all(
-        Array.from({ length: tokensQuantity }, (_, i) =>
-          fetchIPAssetData(nftContractAddress, i + 1)
-        )
+      const assetPromises = Array.from({ length: tokensQuantity }, (_, i) =>
+        fetchIPAssetData(nftContractAddress, i + 1)
       );
 
-      const IPAssets = assets.filter(
-        (asset): asset is IPAsset => asset !== null
-      );
-      setIpAssets(IPAssets);
-      setLoading(false);
+      const maxConcurrent = 5;
+
+      for (let i = 0; i < assetPromises.length; i += maxConcurrent) {
+        const batch = assetPromises.slice(i, i + maxConcurrent);
+        const batchResults = await Promise.all(batch);
+
+        const newAssets = batchResults.filter(
+          (asset): asset is IPAsset => asset !== null
+        );
+
+        setIpAssets((prevAssets) => {
+          const allAssets = [...prevAssets, ...newAssets];
+
+          const uniqueAssetsMap = new Map<string, IPAsset>();
+          allAssets.forEach((asset) => {
+            uniqueAssetsMap.set(asset.id, asset);
+          });
+
+          return Array.from(uniqueAssetsMap.values());
+        });
+      }
     } catch (error) {
-      handleError("Error fetching IP assets", error);
+      console.error("Error in fetching IPA:", error);
     }
   };
 
@@ -101,8 +115,10 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
   ): Promise<IPAsset | null> => {
     try {
       const id = await fetchIPAssetId(nftContractAddress, index);
-      const { name, imageUrl } = await getNameAndImageIPA(id as `0x${string}`);
-      const licenses = await getLicenseTermsData(id as `0x${string}`);
+      const [{ name, imageUrl }, licenses] = await Promise.all([
+        getNameAndImageIPA(id as `0x${string}`),
+        getLicenseTermsData(id as `0x${string}`),
+      ]);
       const mainLicense = licenses[0];
 
       return {
@@ -112,7 +128,7 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
         licenseId: mainLicense ? parseInt(mainLicense.id, 10) : undefined,
       };
     } catch (error) {
-      console.error(`Error fetching data for index ${index}:`, error);
+      console.error(`Error in fetching data for index ${index}:`, error);
       return null;
     }
   };
@@ -129,33 +145,9 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
     )) as string;
   };
 
-  
-
-  const handleError = (message: string, error?: unknown) => {
-    if (error instanceof Error) {
-      setError(`${message}: ${error.message}`);
-    } else {
-      console.error(message);
-      setError(`${message}: Unknown error`);
-    }
-    setLoading(false);
-  };
-
   const filteredAssets = showCommercialOnly
     ? ipAssets.filter((asset) => asset.licenseId && asset.licenseId !== 1)
     : ipAssets;
-
-  if (loading) {
-    return <div className="text-center p-8">Loading IP assets...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center p-8 text-red-500">Error: {error}</div>;
-  }
-
-  if (ipAssets.length === 0) {
-    return <div className="text-center p-8">No IP assets found.</div>;
-  }
 
   return (
     <div>
@@ -165,10 +157,13 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
           className="bg-gray-600 text-white font-semibold mt-4 px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
         >
           {showCommercialOnly
-            ? "Show All Assets"
-            : "Show Only Commercial Licenses"}
+            ? "Show all"
+            : "Show only commercial"}
         </button>
       </div>
+      {filteredAssets.length === 0 && (
+        <div className="text-center p-8">Loading...</div>
+      )}
       <Swiper
         modules={[Navigation]}
         navigation
@@ -177,7 +172,7 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
         className="mb-2"
       >
         {filteredAssets.map((asset, index) => (
-          <SwiperSlide key={asset.id}>
+          <SwiperSlide key={`${asset.id}-${index}`}>
             <div
               className="bg-white rounded p-4 mr-10 ml-10 cursor-pointer"
               onClick={() => router.push(`/ipa/${asset.id}`)}
@@ -195,9 +190,9 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
                   alt={asset.name}
                   fill
                   className="object-contain rounded"
-                  priority={index < 2} // Only prioritize the first two images
+                  priority={index < 2}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  loading={index < 2 ? undefined : "lazy"} // Use "lazy" loading only for non-priority images
+                  loading={index < 2 ? undefined : "lazy"}
                 />
               </div>
               <h2 className="text-xl text-center font-bold mb-2">
@@ -205,7 +200,7 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
               </h2>
               {asset.licenseId && asset.licenseId !== 1 && (
                 <p className="text-gray-600 text-center">
-                  (Commercial License)
+                  (commercial license)
                 </p>
               )}
             </div>

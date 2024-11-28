@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount, useWalletClient } from "wagmi";
 import { LicenseTerms } from "@story-protocol/core-sdk";
@@ -10,17 +10,13 @@ import { checksumAddress } from "viem";
 import { getIPAOwner } from "@/utils/get-data/getIPAOwner";
 import { currencyTokensAddress } from "@/utils/resources/currencyTokenAddress";
 import BackToIPAButton from "@/components/buttons/BackToIPAButton";
+import { useParams } from 'next/navigation';
 
 
-interface PageProps {
-    params: {
-        ipaid: `0x${string}`;
-    };
-}
-
-const AddCommercialLicensePage: React.FC<PageProps> = ({ params }) => {
+const AddCommercialLicensePage: React.FC = () => {
+    const params = useParams();
+    const { ipaid } = params as { ipaid: `0x${string}` };
     const router = useRouter();
-    const { ipaid } = params;
     const { address, isConnected } = useAccount();
     const { data: wallet } = useWalletClient();
     const [isOwner, setIsOwner] = useState<boolean>(false);

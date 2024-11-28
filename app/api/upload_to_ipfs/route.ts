@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pinataSDK, { PinataPinOptions } from '@pinata/sdk';
-import { Readable } from 'stream';
+import { PinataSDK } from "pinata-web3";
+
 
 const pinataJwt = process.env.PINATA_JWT;
-if (!pinataJwt) {
-  throw new Error('PINATA_JWT is not set');
-}
+const pinataGateway = process.env.PINATA_GATEWAY;
 
-const pinata = new pinataSDK({ pinataJWTKey: pinataJwt });
+const pinata = new PinataSDK({
+  pinataJwt: pinataJwt,
+  pinataGateway: pinataGateway,
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,10 +16,13 @@ export async function POST(req: NextRequest) {
 
     if (contentType.includes('application/json')) {
       const metadata = await req.json();
-      const result = await pinata.pinJSONToIPFS(metadata);
+      if (typeof metadata !== 'object' || Array.isArray(metadata)) {
+        return NextResponse.json({ message: 'Invalid JSON data' }, { status: 400 });
+      }
+      const result = await pinata.upload.json(metadata);
       return NextResponse.json({ IpfsHash: result.IpfsHash });
-    } 
-    
+    }
+
     else if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData();
       const file = formData.get('file') as File;
@@ -27,24 +31,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: 'No file uploaded' }, { status: 400 });
       }
 
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-
-      const stream = Readable.from(buffer);
-
-      const options: PinataPinOptions = {
-        pinataMetadata: {
-          name: file.name,
-        },
-        pinataOptions: {
-          cidVersion: 0,
-        },
-      };
-
-      const result = await pinata.pinFileToIPFS(stream, options);
+      const result = await pinata.upload.file(file);
       return NextResponse.json({ IpfsHash: result.IpfsHash });
-    } 
-    
+    }
+
     else {
       return NextResponse.json({ message: 'Unsupported content type' }, { status: 400 });
     }

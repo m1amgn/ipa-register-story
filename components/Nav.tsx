@@ -1,109 +1,78 @@
 "use client";
 
 import Link from "next/link";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Menu,
-  MenuItem,
-} from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const Navigation: React.FC = () => {
-  const [anchorElProfile, setAnchorElProfile] = useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElRegister, setAnchorElRegister] = useState<null | HTMLElement>(
-    null
-  );
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
-  const handleProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorElProfile(event.currentTarget);
+  const toggleProfileMenu = () => {
+    setIsProfileMenuOpen(!isProfileMenuOpen);
   };
 
-  const handleRegisterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorElRegister(event.currentTarget);
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      profileMenuRef.current &&
+      !profileMenuRef.current.contains(event.target as Node)
+    ) {
+      setIsProfileMenuOpen(false);
+    }
   };
 
-  const handleProfileClose = () => {
-    setAnchorElProfile(null);
-  };
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
-  const handleRegisterClose = () => {
-    setAnchorElRegister(null);
-  };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#333" }}>
-      <Toolbar>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, color: "#ccc", px: 2 }}
-        >
-          MyApp
-        </Typography>
-        <Link href="/" passHref>
-          <Button sx={{ color: "#ccc", "&:hover": { color: "#fff" }, px: 2 }}>
-            Home
-          </Button>
-        </Link>
-        <Link href="/gallery" passHref>
-          <Button sx={{ color: "#ccc", "&:hover": { color: "#fff" }, px: 2 }}>
+    <nav className="bg-gray-600 text-white font-medium py-4">
+      <div className="container mx-auto flex items-center justify-between px-4">
+        <div className="text-lg font-bold">
+          <Link href="/" className="hover:text-gray-300">
+            MyApp
+          </Link>
+        </div>
+        <div className="flex items-center space-x-6">
+          <div className="relative" ref={profileMenuRef}>
+            <button
+              onClick={toggleProfileMenu}
+              className="hover:text-gray-300 focus:outline-none"
+            >
+              Profile
+            </button>
+            {isProfileMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-lg">
+                <Link
+                  href="/profile/my-ipa"
+                  onClick={() => setIsProfileMenuOpen(false)}
+                  className="block px-4 py-2 text-sm hover:bg-gray-500 hover:text-white"
+                >
+                  My IPA
+                </Link>
+                <Link
+                  href="/profile/my-license-tokens"
+                  onClick={() => setIsProfileMenuOpen(false)}
+                  className="block px-4 py-2 text-sm hover:bg-gray-500 hover:text-white"
+                >
+                  My License Tokens
+                </Link>
+              </div>
+            )}
+          </div>
+          <Link href="/gallery" className="hover:text-gray-300">
             Gallery
-          </Button>
-        </Link>
-        <Link href="/register/register-ipa" passHref>
-          <Button sx={{ color: "#ccc", "&:hover": { color: "#fff" }, px: 2 }}>
-            REGISTER IPA
-          </Button>
-        </Link>
-        <Button
-          sx={{ color: "#ccc", "&:hover": { color: "#fff" }, px: 2 }}
-          onClick={handleProfileClick}
-        >
-          Profile
-        </Button>
-        <Menu
-          anchorEl={anchorElProfile}
-          open={Boolean(anchorElProfile)}
-          onClose={handleProfileClose}
-          MenuListProps={{
-            sx: {
-              backgroundColor: "#444",
-              color: "#ccc",
-              px: 2
-            },
-          }}
-        >
-          <Link href="/profile/my-ipa" passHref>
-            <MenuItem
-              onClick={handleProfileClose}
-              sx={{
-                color: "#ccc",
-                "&:hover": { backgroundColor: "#555", color: "#fff" },
-              }}
-            >
-              My IPA
-            </MenuItem>
           </Link>
-          <Link href="/profile/my-license-tokens" passHref>
-            <MenuItem
-              onClick={handleProfileClose}
-              sx={{
-                color: "#ccc",
-                "&:hover": { backgroundColor: "#555", color: "#fff" },
-              }}
-            >
-              My License Tokens
-            </MenuItem>
+          <Link href="/register/register-ipa" className="hover:text-gray-300">
+            Register IPA
           </Link>
-        </Menu>
 
-      </Toolbar>
-    </AppBar>
+        </div>
+      </div>
+    </nav>
   );
 };
 

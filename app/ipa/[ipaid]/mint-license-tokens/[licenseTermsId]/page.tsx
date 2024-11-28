@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState, use } from 'react';
 import { useAccount, useWalletClient } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -10,17 +10,12 @@ import { checksumAddress } from 'viem';
 import BackToIPAButton from '@/components/buttons/BackToIPAButton';
 import { sendApproveTransaction } from '@/utils/send-transactions/sendApproveTransaction';
 import { royaltyModuleContractAddress } from '@/abi/royaltyModuleContract';
+import { useParams } from 'next/navigation';
 
 
-interface PageProps {
-    params: {
-        ipaid: string;
-        licenseTermsId: string;
-    };
-}
-
-const MintLicenseTokensPage: React.FC<PageProps> = ({ params }) => {
-    const { ipaid, licenseTermsId } = params;
+const MintLicenseTokensPage: React.FC = () => {
+    const params = useParams();
+    const { ipaid, licenseTermsId } = params as { ipaid: `0x${string}`, licenseTermsId: `0x${string}` };
     const { address, isConnected } = useAccount();
     const [receiverAddress, setReceiverAddress] = useState<string>('');
     const [licenseTokenAmount, setLicenseTokenAmount] = useState<number>(1);
@@ -223,7 +218,6 @@ const MintLicenseTokensPage: React.FC<PageProps> = ({ params }) => {
             </div>
         </div>
     );
-
 };
 
 export default MintLicenseTokensPage;

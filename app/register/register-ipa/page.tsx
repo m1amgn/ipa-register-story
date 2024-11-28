@@ -219,17 +219,17 @@ const CreateIpaPage: React.FC = () => {
         value: attr.value,
       }));
 
-      const ipMetadata: IpMetadata = client.ipAsset.generateIpMetadata({
-        title: formData.title,
-        description: formData.description,
-        attributes: formattedAttributes,
-      });
-
       const nftMetadata = {
         name: formData.title,
         description: formData.description,
         image: `https://ipfs.io/ipfs/${imageIpfsHash}`,
       };
+
+      const ipMetadata: IpMetadata = client.ipAsset.generateIpMetadata({
+        title: formData.title,
+        description: formData.description,
+        attributes: formattedAttributes,
+      });
 
       const ipIpfsHash = await uploadJSONToIPFS(ipMetadata);
 
@@ -285,7 +285,8 @@ const CreateIpaPage: React.FC = () => {
         formData.licenseType === "COMMERCIAL_REMIX"
       ) {
         const revenueShare = parseInt(formData.revenueShare, 10);
-        const mintFee = BigInt(formData.mintFee) * BigInt(10 ** 18);
+        const mintFeeStr = formData.mintFee;
+        const mintFee = BigInt(Math.round(parseFloat(mintFeeStr) * 10 ** 18));
 
         if (isNaN(revenueShare)) {
           setErrorMessage("Revenue Share must be valid numbers.");
@@ -331,7 +332,7 @@ const CreateIpaPage: React.FC = () => {
 
       console.log("Response:", response);
 
-      alert(`IPA: https://odyssey.explorer.story.foundation//ipa/${response.ipId}`);
+      alert(`IPA: https://odyssey.explorer.story.foundation/ipa/${response.ipId}`);
       router.push(`/profile/my-ipa`);
 
     } catch (error: any) {

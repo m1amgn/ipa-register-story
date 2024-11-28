@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, use } from 'react';
 import { useAccount } from 'wagmi';
 import LicenseDetails from '@/components/LicenseDetails';
 import AddCommercialLicenseButton from '@/components/buttons/AddCommercialLicenseButton';
@@ -8,15 +8,13 @@ import { checksumAddress } from 'viem';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { getIPAMetadata } from '@/utils/get-data/getIPAMetadata';
 import AssetDetails from '@/components/AssetDetails';
+import { useParams } from 'next/navigation';
 
-interface PageProps {
-  params: {
-    ipaid: `0x${string}`;
-  };
-}
 
-const AssetDetailsPage: React.FC<PageProps> = ({ params }) => {
-  const { ipaid } = params;
+
+const AssetDetailsPage: React.FC = () => {
+  const params = useParams();
+  const { ipaid } = params as { ipaid: `0x${string}` };
   const { address, isConnected } = useAccount();
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
