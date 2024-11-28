@@ -1,4 +1,4 @@
-Create derivative (need approve):
+1. Create derivative (need approve):
 const derivativeTokenId = await mintNFT(account.address, 'test-uri')
     const registerIpDerivativeResponse = await client.ipAsset.registerDerivativeIp({
         nftContract: NFTContractAddress, // an nft contract in my code
@@ -19,6 +19,9 @@ const derivativeTokenId = await mintNFT(account.address, 'test-uri')
         `Derivative IPA created at transaction hash ${registerIpDerivativeResponse.txHash}, IPA ID: ${registerIpDerivativeResponse.ipId}`
     )
 
-Add API KEYS for api get requests
+2. Downloading 3 files in carusel, and downloading another ipa then carusel is using
 
-royaltyPolicy
+3. Add API KEYS for api get requests
+
+4. royaltyPolicy?
+

@@ -55,36 +55,11 @@ const Navigation: React.FC = () => {
             Gallery
           </Button>
         </Link>
-        <Button
-          sx={{ color: "#ccc", "&:hover": { color: "#fff" }, px: 2 }}
-          onClick={handleRegisterClick}
-        >
-          Register
-        </Button>
-        <Menu
-          anchorEl={anchorElRegister}
-          open={Boolean(anchorElRegister)}
-          onClose={handleRegisterClose}
-          MenuListProps={{
-            sx: {
-              backgroundColor: "#444",
-              color: "#ccc",
-              px: 2
-            },
-          }}
-        >
-          <Link href="/register/register-ipa" passHref>
-            <MenuItem
-              onClick={handleRegisterClose}
-              sx={{
-                color: "#ccc",
-                "&:hover": { backgroundColor: "#555", color: "#fff" },
-              }}
-            >
-              Register IPA
-            </MenuItem>
-          </Link>
-        </Menu>
+        <Link href="/register/register-ipa" passHref>
+          <Button sx={{ color: "#ccc", "&:hover": { color: "#fff" }, px: 2 }}>
+            REGISTER IPA
+          </Button>
+        </Link>
         <Button
           sx={{ color: "#ccc", "&:hover": { color: "#fff" }, px: 2 }}
           onClick={handleProfileClick}
@@ -126,7 +101,7 @@ const Navigation: React.FC = () => {
             </MenuItem>
           </Link>
         </Menu>
-        
+
       </Toolbar>
     </AppBar>
   );
