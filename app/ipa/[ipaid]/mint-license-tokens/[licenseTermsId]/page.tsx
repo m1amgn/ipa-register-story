@@ -3,14 +3,13 @@
 import React, { FormEvent, useEffect, useState, use } from 'react';
 import { useAccount, useWalletClient } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, useParams } from 'next/navigation'
 import { setupStoryClient } from "@/utils/resources/storyClient";
 import { getIPAOwner } from '@/utils/get-data/getIPAOwner';
 import { checksumAddress } from 'viem';
 import BackToIPAButton from '@/components/buttons/BackToIPAButton';
 import { sendApproveTransaction } from '@/utils/send-transactions/sendApproveTransaction';
 import { royaltyModuleContractAddress } from '@/abi/royaltyModuleContract';
-import { useParams } from 'next/navigation';
 
 
 const MintLicenseTokensPage: React.FC = () => {

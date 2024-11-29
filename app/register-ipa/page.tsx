@@ -15,7 +15,7 @@ import { updateNftContract } from "@/utils/api-utils/updateNftContract";
 
 
 
-const CreateIpaPage: React.FC = () => {
+const RegisterIpaPage: React.FC = () => {
   const { address, isConnected } = useAccount();
   const { data: wallet } = useWalletClient();
   const router = useRouter();
@@ -69,6 +69,7 @@ const CreateIpaPage: React.FC = () => {
         } catch (error) {
           console.error("Error fetching nftContract:", error);
           setErrorMessage("Error fetching nftContract. Please try again.");
+          alert(`Error: ${errorMessage}`)
         }
       }
     };
@@ -129,6 +130,7 @@ const CreateIpaPage: React.FC = () => {
     } catch (error: any) {
       console.error("Error updating NFT owners:", error);
       setErrorMessage(`Error updating NFT owners: ${error.message}`);
+      alert(`Error: ${errorMessage}`)
     }
   };
 
@@ -138,6 +140,7 @@ const CreateIpaPage: React.FC = () => {
 
     if (!wallet) {
       setErrorMessage("Error: wallet not found. Please try again.");
+      alert(`Error: ${errorMessage}`)
       setLoading(false);
       return;
     }
@@ -146,6 +149,7 @@ const CreateIpaPage: React.FC = () => {
       const client = setupStoryClient(wallet);
       if (!client) {
         setErrorMessage("Error initializing StoryClient.");
+        alert(`Error: ${errorMessage}`)
         setLoading(false);
         return;
       }
@@ -172,6 +176,7 @@ const CreateIpaPage: React.FC = () => {
     } catch (error: any) {
       console.error("Error creating NFT collection:", error);
       setErrorMessage(`Error creating NFT collection: ${error.message}`);
+      alert(`Error: ${errorMessage}`)
     } finally {
       setLoading(false);
     }
@@ -182,18 +187,20 @@ const CreateIpaPage: React.FC = () => {
     setCollectionData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmitIPACreate = async (e: FormEvent) => {
+  const handleSubmitIPARegister = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     if (!isConnected || !address) {
       setErrorMessage("Please connect your wallet.");
+      alert(`Error: ${errorMessage}`)
       setLoading(false);
       return;
     }
 
     if (!wallet) {
       setErrorMessage("Error: wallet not found. Please try again.");
+      alert(`Error: ${errorMessage}`)
       setLoading(false);
       return;
     }
@@ -201,6 +208,7 @@ const CreateIpaPage: React.FC = () => {
     const client = setupStoryClient(wallet);
     if (!client) {
       setErrorMessage("Error initializing StoryClient.");
+      alert(`Error: ${errorMessage}`)
       setLoading(false);
       return;
     }
@@ -338,6 +346,7 @@ const CreateIpaPage: React.FC = () => {
     } catch (error: any) {
       console.error("Error in registration IPA:", error);
       setErrorMessage(`Error in registration IPA: ${error.message}`);
+      alert(`Error: ${errorMessage}`)
     } finally {
       setLoading(false);
     }
@@ -349,11 +358,6 @@ const CreateIpaPage: React.FC = () => {
         <ConnectButton />
       </div>
       <div className="max-w-lg w-full mx-auto bg-white rounded-lg shadow-lg p-6">
-        {errorMessage && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
-            {errorMessage}
-          </div>
-        )}
         {!isConnected || !address ? (
           <p className="text-center text-gray-500">
             Please connect your wallet to proceed.
@@ -403,7 +407,7 @@ const CreateIpaPage: React.FC = () => {
             <h1 className="text-3xl font-semibold text-center mb-8 text-gray-700">
               Register IP Asset
             </h1>
-            <form onSubmit={handleSubmitIPACreate} className="space-y-5">
+            <form onSubmit={handleSubmitIPARegister} className="space-y-5">
               <div>
                 <input
                   name="title"
@@ -624,4 +628,4 @@ const CreateIpaPage: React.FC = () => {
   );
 };
 
-export default CreateIpaPage;
+export default RegisterIpaPage;

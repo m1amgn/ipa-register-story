@@ -30,7 +30,7 @@ export default async function IPAAssetsPage() {
   const ownersData = await fetchOwnersData();
 
   if (!ownersData) {
-    return <div className="text-center p-8 text-red-500">Error: Failed to fetch IP assets data.</div>;
+    return <div className="text-center p-8 text-gray-500">Error: Failed to fetch IP assets data.</div>;
   }
 
   if (Object.keys(ownersData).length === 0) {

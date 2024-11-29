@@ -5,6 +5,7 @@ import { currencyTokensAddress } from '@/utils/resources/currencyTokenAddress';
 import { Tooltip } from '@/components/resources/TitleTooltip';
 import MintLicenseTokensButton from './buttons/MintLicenseTokensButton';
 import { getLicenseTermsData } from '@/utils/get-data/getLicenseTermsData';
+import RegisterDerivativeButton from './buttons/RegisterDerivativeButton';
 
 
 interface LicenseDetailsProps {
@@ -120,6 +121,22 @@ const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isO
                 />
               );
             })()}
+            {!isOwner && license.id !== '1' && (() => {
+              const mintingFeeTerm = license.licenseTerms.find(term => term.trait_type === 'Minting Fee (currency)');
+              const currencyTerm = license.licenseTerms.find(term => term.trait_type === 'Currency');
+
+              const mintingFee = mintingFeeTerm?.value ? BigInt(mintingFeeTerm.value) : BigInt(0);
+              const currency = currencyTerm?.value as `0x${string}` ?? '';
+
+              return (
+                <RegisterDerivativeButton
+                  ipaid={ipaid}
+                  licenseTermsId={license.id}
+                  mintingFee={mintingFee}
+                  currency={currency}
+                />
+              );
+            })()}
           </div>
           {expandedLicenseIds.includes(license.id) && (
             <div className="space-y-2 mt-4">
@@ -134,8 +151,8 @@ const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isO
                     {term.trait_type === 'Currency'
                       ? getCurrencySymbol(term.value as string)
                       : term.trait_type === 'Minting Fee (currency)'
-                      ? parseFloat((parseFloat(term.value.toString()) / 10 ** 18).toFixed(20)).toString()
-                      : term.value.toString()}
+                        ? parseFloat((parseFloat(term.value.toString()) / 10 ** 18).toFixed(20)).toString()
+                        : term.value.toString()}
                     {term.max_value ? ` (Max: ${term.max_value})` : ''}
                   </span>
                 </div>

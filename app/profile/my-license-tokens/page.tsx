@@ -7,9 +7,18 @@ import { licenseTokenContractAddress, licenseTokenContractABI } from "@/abi/lice
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { getIPAMetadata } from "@/utils/get-data/getIPAMetadata";
 import { getNameAndImageIPA } from "@/utils/get-data/getNameAndImageIPA";
-import AssetDetails from "@/components/AssetDetails";
-import LicenseDetails from "@/components/LicenseDetails";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import { useRouter } from 'next/navigation';
+
+const AssetDetails = dynamic(() => import('@/components/AssetDetails'), {
+    ssr: false,
+});
+
+const LicenseDetails = dynamic(() => import('@/components/LicenseDetails'), {
+    ssr: false,
+});
+
 
 type LicenseTokenMetadata = {
     tokenId: string;
@@ -28,6 +37,8 @@ const MyLicenseTokensPage = () => {
     const [selectedToken, setSelectedToken] = useState<LicenseTokenMetadata | null>(null);
     const [tokenAssetData, setTokenAssetData] = useState<any | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+
 
     const fetchLicenseTokensBalanceOf = async () => {
         if (!isConnected || !address) return BigInt(0);
@@ -174,7 +185,7 @@ const MyLicenseTokensPage = () => {
                                     className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        alert(`Make derivative for Token ID: ${metadata.tokenId}`);
+                                        router.push(`my-license-tokens/${metadata.tokenId}/register-derivative`)
                                     }}
                                 >
                                     Register Derivative
@@ -202,19 +213,17 @@ const MyLicenseTokensPage = () => {
                         >
                             ✕
                         </button>
-                        {tokenAssetData ? (
+                        {tokenAssetData && (
                             <>
                                 <AssetDetails ipaid={selectedToken.licensorIpId} />
                                 <LicenseDetails ipaid={selectedToken.licensorIpId} isConnected={false} isOwner={false} />
                             </>
-                        ) : (
-                            <p>Loading token details...</p>
                         )}
                     </div>
                 </div>
             )}
 
-            {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+            {error && <p className="text-gray-500 text-center mt-4">{error}</p>}
         </div>
     );
 };

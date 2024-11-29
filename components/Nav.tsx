@@ -29,14 +29,14 @@ const Navigation: React.FC = () => {
 
 
   return (
-    <nav className="bg-gray-600 text-white font-medium py-4">
-      <div className="container mx-auto flex items-center justify-between px-4">
+    <nav className="bg-gray-600 text-white font-medium py-4 px-2">
+      <div className="container mx-auto flex items-center justify-between">
         <div className="text-lg font-bold">
           <Link href="/" className="hover:text-gray-300">
             MyApp
           </Link>
         </div>
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-10">
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={toggleProfileMenu}
@@ -66,7 +66,7 @@ const Navigation: React.FC = () => {
           <Link href="/gallery" className="hover:text-gray-300">
             Gallery
           </Link>
-          <Link href="/register/register-ipa" className="hover:text-gray-300">
+          <Link href="/register-ipa" className="hover:text-gray-300">
             Register IPA
           </Link>
 

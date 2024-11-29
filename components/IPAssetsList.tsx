@@ -151,62 +151,48 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
 
   return (
     <div>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end">
         <button
           onClick={() => setShowCommercialOnly(!showCommercialOnly)}
-          className="bg-gray-600 text-white font-semibold mt-4 px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
+          className="bg-gray-600 text-white font-semibold px-4 py-2 mb-2 rounded hover:bg-indigo-700 transition-colors"
         >
-          {showCommercialOnly
-            ? "Show all"
-            : "Show only commercial"}
+          {showCommercialOnly ? "Show all" : "Show only commercial"}
         </button>
       </div>
       {filteredAssets.length === 0 && (
         <div className="text-center p-8">Loading...</div>
       )}
-      <Swiper
-        modules={[Navigation]}
-        navigation
-        spaceBetween={1}
-        slidesPerView={2}
-        className="mb-2"
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {filteredAssets.map((asset, index) => (
-          <SwiperSlide key={`${asset.id}-${index}`}>
-            <div
-              className="bg-white rounded p-4 mr-10 ml-10 cursor-pointer"
-              onClick={() => router.push(`/ipa/${asset.id}`)}
-            >
-              <div className="relative w-full h-48 md:h-64 lg:h-80">
-                <Image
-                  src={
-                    asset.imageUrl.startsWith("ipfs://")
-                      ? asset.imageUrl.replace(
-                          "ipfs://",
-                          "https://ipfs.io/ipfs/"
-                        )
-                      : asset.imageUrl
-                  }
-                  alt={asset.name}
-                  fill
-                  className="object-contain rounded"
-                  priority={index < 2}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  loading={index < 2 ? undefined : "lazy"}
-                />
-              </div>
-              <h2 className="text-xl text-center font-bold mb-2">
-                {asset.name}
-              </h2>
-              {asset.licenseId && asset.licenseId !== 1 && (
-                <p className="text-gray-600 text-center">
-                  (commercial license)
-                </p>
-              )}
+          <div
+            key={asset.id}
+            className="bg-white rounded p-4 cursor-pointer hover:bg-gray-300"
+            onClick={() => router.push(`/ipa/${asset.id}`)}
+          >
+            <div className="relative w-full h-48 md:h-64">
+              <Image
+                src={
+                  asset.imageUrl.startsWith("ipfs://")
+                    ? asset.imageUrl.replace(
+                      "ipfs://",
+                      "https://ipfs.io/ipfs/"
+                    )
+                    : asset.imageUrl
+                }
+                alt={asset.name}
+                fill
+                className="object-contain rounded"
+                priority={index < 2}
+                loading={index < 2 ? undefined : "lazy"}
+              />
             </div>
-          </SwiperSlide>
+            <h2 className="text-xl text-center font-bold mb-2">{asset.name}</h2>
+            {asset.licenseId && asset.licenseId !== 1 && (
+              <p className="text-gray-600 text-center">(commercial license)</p>
+            )}
+          </div>
         ))}
-      </Swiper>
+      </div>
     </div>
   );
 };

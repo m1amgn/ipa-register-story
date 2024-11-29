@@ -19,7 +19,7 @@ const derivativeTokenId = await mintNFT(account.address, 'test-uri')
         `Derivative IPA created at transaction hash ${registerIpDerivativeResponse.txHash}, IPA ID: ${registerIpDerivativeResponse.ipId}`
     )
 
-2. Downloading 3 files in carusel, and downloading another ipa then carusel is using
+2. Relationship in derivative
 
 3. Add API KEYS for api get requests
 
