@@ -182,6 +182,7 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
                 alt={asset.name}
                 fill
                 className="object-contain rounded"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 priority={index < 2}
                 loading={index < 2 ? undefined : "lazy"}
               />

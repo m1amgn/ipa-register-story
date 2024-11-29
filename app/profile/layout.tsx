@@ -3,6 +3,6 @@
 import Web3Providers from '@/components/resources/Web3Providers';
 import { PropsWithChildren } from 'react';
 
-export default function AddCommercialLicense({ children }: PropsWithChildren) {
+export default function ProfileLayout({ children }: PropsWithChildren) {
   return <Web3Providers>{children}</Web3Providers>;
 }

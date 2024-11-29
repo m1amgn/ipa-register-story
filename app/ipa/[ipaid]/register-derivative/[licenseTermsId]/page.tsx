@@ -13,6 +13,7 @@ import { getNftContract } from "@/utils/api-utils/getNftContract";
 import { updateNftContract } from "@/utils/api-utils/updateNftContract";
 import { sendApproveTransaction } from "@/utils/send-transactions/sendApproveTransaction";
 import { derivativeWorkflowsContractAddress } from "@/abi/derivativeWorkflowsContracts";
+import BackToIPAButton from "@/components/buttons/BackToIPAButton";
 
 
 const RegisterDerivative: React.FC = () => {
@@ -248,7 +249,8 @@ const RegisterDerivative: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-between items-center mb-4">
+                <BackToIPAButton ipaid={ipaid} />
                 <ConnectButton />
             </div>
             <div className="max-w-lg w-full mx-auto bg-white rounded-lg shadow-lg p-6">
