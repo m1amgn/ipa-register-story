@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { readContracts } from "@/utils/get-data/readContracts";
-import { licenseTokenContractAddress, licenseTokenContractABI } from "@/abi/licenseTokenContract";
+import { licenseTokenContractAddress, licenseTokenContractABI } from "@/utils/contracts/licenseTokenContract";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { getIPAMetadata } from "@/utils/get-data/getIPAMetadata";
 import { getNameAndImageIPA } from "@/utils/get-data/getNameAndImageIPA";
@@ -216,7 +216,7 @@ const MyLicenseTokensPage = () => {
                         {tokenAssetData && (
                             <>
                                 <AssetDetails ipaid={selectedToken.licensorIpId} />
-                                <LicenseDetails ipaid={selectedToken.licensorIpId} isConnected={false} isOwner={false} />
+                                <LicenseDetails ipaid={selectedToken.licensorIpId} isConnected={false} isOwner={false} showDerivativeButton={false} />
                             </>
                         )}
                     </div>

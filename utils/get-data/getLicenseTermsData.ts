@@ -1,7 +1,7 @@
 import { Abi } from "viem";
 import { readContracts } from "./readContracts";
-import { licenseRegistryABI, licenseRegistryAddress } from "@/abi/licenseRegistry";
-import { PILicenseTemplateABI, PILicenseTemplateAddress } from "@/abi/PILicenseTemplate";
+import { licenseRegistryABI, licenseRegistryAddress } from "@/utils/contracts/licenseRegistry";
+import { PILicenseTemplateABI, PILicenseTemplateAddress } from "@/utils/contracts/PILicenseTemplate";
 
 interface License {
   id: string;

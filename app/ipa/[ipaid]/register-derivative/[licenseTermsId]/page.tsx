@@ -12,7 +12,7 @@ import { uploadJSONToIPFS } from "@/utils/api-utils/uploadJSONToIPFS";
 import { getNftContract } from "@/utils/api-utils/getNftContract";
 import { updateNftContract } from "@/utils/api-utils/updateNftContract";
 import { sendApproveTransaction } from "@/utils/send-transactions/sendApproveTransaction";
-import { derivativeWorkflowsContractAddress } from "@/abi/derivativeWorkflowsContracts";
+import { derivativeWorkflowsContractAddress } from "@/utils/contracts/derivativeWorkflowsContracts";
 import BackToIPAButton from "@/components/buttons/BackToIPAButton";
 
 

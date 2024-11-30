@@ -5,8 +5,8 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'test-vel',
-  description: 'test-vel',
+  title: 'StoryApp',
+  description: 'StoryApp',
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {

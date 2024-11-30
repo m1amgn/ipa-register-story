@@ -11,7 +11,6 @@ import AssetDetails from '@/components/AssetDetails';
 import { useParams } from 'next/navigation';
 
 
-
 const AssetDetailsPage: React.FC = () => {
   const params = useParams();
   const { ipaid } = params as { ipaid: `0x${string}` };
@@ -19,7 +18,6 @@ const AssetDetailsPage: React.FC = () => {
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,14 +58,19 @@ const AssetDetailsPage: React.FC = () => {
   }
 
   if (error) {
-    return <div className="text-center p-8 text-red-500">Error: {error || "Asset not found"}</div>;
+    return <div className="text-center p-8 text-gray-500">Error: {error || "Asset not found"}</div>;
   }
 
   return (
     <>
-      <div className="flex justify-end mb-4 mt-4 mr-2">
+      <div className="flex justify-end mb-2 mt-4 mr-2">
         <ConnectButton />
       </div>
+      {!isConnected && (
+        <div className='flex text-gray-500 text-sm justify-end mb-2 mt-2 mr-3'>
+          <p>Connect wallet to manage IP Asset</p>
+        </div>
+      )}
       <div className="container mx-auto pb-4">
         <AssetDetails ipaid={ipaid} />
         {isConnected && address && isOwner && (
@@ -75,7 +78,15 @@ const AssetDetailsPage: React.FC = () => {
             <AddCommercialLicenseButton ipaid={ipaid} />
           </div>
         )}
-        <LicenseDetails ipaid={ipaid} isConnected={isConnected} isOwner={isOwner} />
+        {isConnected ? (
+          <div>
+            <LicenseDetails ipaid={ipaid} isConnected={isConnected} isOwner={isOwner} showDerivativeButton={true} />
+          </div>
+        ) : (
+          <div>
+          <LicenseDetails ipaid={ipaid} isConnected={isConnected} isOwner={isOwner} showDerivativeButton={false} />
+        </div>
+        )}
       </div>
     </>
   );

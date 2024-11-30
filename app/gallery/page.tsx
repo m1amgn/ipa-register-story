@@ -44,7 +44,7 @@ export default async function IPAAssetsPage() {
           <h2 className="text-2xl font-bold mb-4">
             Address: {address} Contract: {contract}
           </h2>
-          <IPAssetsList address={address as `0x${string}`} />
+          <IPAssetsList address={address as `0x${string}`} isDerivativeFlag={false} />
         </div>
       ))}
     </div>

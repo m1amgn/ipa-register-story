@@ -9,7 +9,7 @@ import { getIPAOwner } from '@/utils/get-data/getIPAOwner';
 import { checksumAddress } from 'viem';
 import BackToIPAButton from '@/components/buttons/BackToIPAButton';
 import { sendApproveTransaction } from '@/utils/send-transactions/sendApproveTransaction';
-import { royaltyModuleContractAddress } from '@/abi/royaltyModuleContract';
+import { royaltyModuleContractAddress } from '@/utils/contracts/royaltyModuleContract';
 
 
 const MintLicenseTokensPage: React.FC = () => {

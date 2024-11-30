@@ -3,24 +3,12 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Abi } from "viem";
-import { readContracts } from "@/utils/get-data/readContracts";
-import { spgTokenContractAbi } from "@/abi/spgTokenContract";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
-import {
-  IPAssetRegistryContractAddress,
-  IPAssetRegistryContractABI,
-} from "@/abi/IPAssetRegistry";
-
 import { getNftContract } from "@/utils/api-utils/getNftContract";
-import { getLicenseTermsData } from "@/utils/get-data/getLicenseTermsData";
-import { getNameAndImageIPA } from "@/utils/get-data/getNameAndImageIPA";
+import { getIPADataForAssetsList } from "@/utils/get-data/getIPADataForAssetsList";
+import { getMyTokensAmount } from "@/utils/get-data/getMyTokensAmount";
 
 interface IPAsset {
-  id: string;
+  id: `0x${string}`;
   name: string;
   imageUrl: string;
   licenseId?: number;
@@ -28,9 +16,10 @@ interface IPAsset {
 
 interface IPAssetsListProps {
   address: `0x${string}`;
+  isDerivativeFlag: boolean;
 }
 
-const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
+const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag }) => {
   const [ipAssets, setIpAssets] = useState<IPAsset[]>([]);
   const [showCommercialOnly, setShowCommercialOnly] = useState<boolean>(false);
   const router = useRouter();
@@ -56,7 +45,7 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
 
   const fetchIPAssets = async (nftContractAddress: string) => {
     try {
-      const tokensQuantityBigInt = await getTokensQuantity(
+      const tokensQuantityBigInt = await getMyTokensAmount(
         nftContractAddress,
         address
       );
@@ -67,10 +56,10 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
       }
 
       const assetPromises = Array.from({ length: tokensQuantity }, (_, i) =>
-        fetchIPAssetData(nftContractAddress, i + 1)
+        getIPADataForAssetsList(nftContractAddress, i + 1, isDerivativeFlag)
       );
 
-      const maxConcurrent = 5;
+      const maxConcurrent = 2;
 
       for (let i = 0; i < assetPromises.length; i += maxConcurrent) {
         const batch = assetPromises.slice(i, i + maxConcurrent);
@@ -96,69 +85,24 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address }) => {
     }
   };
 
-  const getTokensQuantity = async (
-    nftContractAddress: string,
-    address: `0x${string}`
-  ): Promise<BigInt> => {
-    const quantity = await readContracts(
-      nftContractAddress as `0x${string}`,
-      spgTokenContractAbi as Abi,
-      "balanceOf",
-      [address]
-    );
-    return quantity as BigInt;
-  };
-
-  const fetchIPAssetData = async (
-    nftContractAddress: string,
-    index: number
-  ): Promise<IPAsset | null> => {
-    try {
-      const id = await fetchIPAssetId(nftContractAddress, index);
-      const [{ name, imageUrl }, licenses] = await Promise.all([
-        getNameAndImageIPA(id as `0x${string}`),
-        getLicenseTermsData(id as `0x${string}`),
-      ]);
-      const mainLicense = licenses[0];
-
-      return {
-        id,
-        name,
-        imageUrl,
-        licenseId: mainLicense ? parseInt(mainLicense.id, 10) : undefined,
-      };
-    } catch (error) {
-      console.error(`Error in fetching data for index ${index}:`, error);
-      return null;
-    }
-  };
-
-  const fetchIPAssetId = async (
-    nftContractAddress: string,
-    index: number
-  ): Promise<string> => {
-    return (await readContracts(
-      IPAssetRegistryContractAddress as `0x${string}`,
-      IPAssetRegistryContractABI as Abi,
-      "ipId",
-      [process.env.NEXT_PUBLIC_X_CHAIN, nftContractAddress, index]
-    )) as string;
-  };
-
   const filteredAssets = showCommercialOnly
     ? ipAssets.filter((asset) => asset.licenseId && asset.licenseId !== 1)
     : ipAssets;
 
   return (
     <div>
-      <div className="flex justify-end">
-        <button
-          onClick={() => setShowCommercialOnly(!showCommercialOnly)}
-          className="bg-gray-600 text-white font-semibold px-4 py-2 mb-2 rounded hover:bg-indigo-700 transition-colors"
-        >
-          {showCommercialOnly ? "Show all" : "Show only commercial"}
-        </button>
-      </div>
+      {
+        !isDerivativeFlag && (
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowCommercialOnly(!showCommercialOnly)}
+              className="bg-gray-600 text-white font-semibold px-4 py-2 mb-2 rounded hover:bg-indigo-700 transition-colors"
+            >
+              {showCommercialOnly ? "Show all" : "Show only commercial"}
+            </button>
+          </div>
+        )
+      }
       {filteredAssets.length === 0 && (
         <div className="text-center p-8">Loading...</div>
       )}

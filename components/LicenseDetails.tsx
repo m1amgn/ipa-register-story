@@ -12,6 +12,8 @@ interface LicenseDetailsProps {
   ipaid: `0x${string}`;
   isConnected: boolean;
   isOwner: boolean;
+  showDerivativeButton: boolean;
+
 }
 
 interface License {
@@ -23,7 +25,7 @@ interface License {
   }>;
 }
 
-const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isOwner }) => {
+const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isOwner, showDerivativeButton }) => {
   const [licenses, setLicenses] = useState<License[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -121,7 +123,7 @@ const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isO
                 />
               );
             })()}
-            {!isOwner && license.id !== '1' && (() => {
+            {!isOwner && showDerivativeButton && license.id !== '1' && (() => {
               const mintingFeeTerm = license.licenseTerms.find(term => term.trait_type === 'Minting Fee (currency)');
               const currencyTerm = license.licenseTerms.find(term => term.trait_type === 'Currency');
 

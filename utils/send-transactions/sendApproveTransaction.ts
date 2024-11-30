@@ -1,8 +1,8 @@
-import { SUSDContractABI, SUSDContractAddress } from "@/abi/SUSDContract";
+import { SUSDContractABI, SUSDContractAddress } from "@/utils/contracts/SUSDContract";
 import { checksumAddress, encodeFunctionData, toHex } from "viem";
 import { publicClient } from "../resources/publicClient";
 import { WalletClient, Account, Chain, Abi } from "viem";
-import { WIPContractABI, WIPContractAddress } from "@/abi/WIPContract";
+import { WIPContractABI, WIPContractAddress } from "@/utils/contracts/WIPContract";
 
 
 export const sendApproveTransaction = async (

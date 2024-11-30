@@ -1,12 +1,13 @@
-'use client';
+// 0xEfcF9F7251660b13FE9dcF99157810063fb19383
+
+"use client";
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import IPAssetsList from '@/components/IPAssetsList';
 import { useAccount } from 'wagmi';
-import RegisterIpaButton from '@/components/buttons/RegisterIpaButton';
 
-const MyIPAssets: React.FC = () => {
+const MyDerivatives: React.FC = () => {
   const { address, isConnected } = useAccount();
 
   if (typeof window === 'undefined') {
@@ -21,16 +22,16 @@ const MyIPAssets: React.FC = () => {
         </div>
         {isConnected && address ? (
           <>
-            <RegisterIpaButton />
-            <h1 className="text-3xl font-bold text-center mb-8">My IP Assets</h1>
-            <IPAssetsList address={address} isDerivativeFlag={false}/>
+            <h1 className="text-3xl font-bold text-center mb-8">My Derivatives</h1>
+            <IPAssetsList address={address} isDerivativeFlag={true}/>
           </>
         ) : (
-          <p className="text-center">Please connect your wallet to view your IP assets.</p>
+          <p className="text-center">Please connect your wallet to view your Derivatives.</p>
         )}
       </div>
     </div>
   );
 };
 
-export default MyIPAssets;
+export default MyDerivatives;
+

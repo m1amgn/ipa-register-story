@@ -1,4 +1,4 @@
-import { coreMetadataViewModuleABI, coreMetadataViewModuleAddress } from "@/abi/coreMetadataViewModule";
+import { coreMetadataViewModuleABI, coreMetadataViewModuleAddress } from "@/utils/contracts/coreMetadataViewModule";
 import { Abi } from "viem";
 import { readContracts } from "@/utils/get-data/readContracts";
 

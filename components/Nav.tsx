@@ -33,7 +33,7 @@ const Navigation: React.FC = () => {
       <div className="container mx-auto flex items-center justify-between">
         <div className="text-lg font-bold">
           <Link href="/" className="hover:text-gray-300">
-            MyApp
+            StoryApp
           </Link>
         </div>
         <div className="flex items-center space-x-10">
@@ -52,6 +52,13 @@ const Navigation: React.FC = () => {
                   className="block px-4 py-2 text-sm hover:bg-gray-500 hover:text-white"
                 >
                   My IPA
+                </Link>
+                <Link
+                  href="/profile/my-derivatives"
+                  onClick={() => setIsProfileMenuOpen(false)}
+                  className="block px-4 py-2 text-sm hover:bg-gray-500 hover:text-white"
+                >
+                  My Derivatives
                 </Link>
                 <Link
                   href="/profile/my-license-tokens"
