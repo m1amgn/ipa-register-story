@@ -201,9 +201,9 @@ const RegisterDerivativeWithLicenseTokenPage: React.FC = () => {
                 .update(JSON.stringify(nftMetadata))
                 .digest("hex")}`;
 
-            const tokenId = Array.isArray(params["token-id"]) 
-                ? params["token-id"][0] 
-                : params["token-id"];
+            const tokenId = Array.isArray(params["tokenId"]) 
+                ? params["tokenId"][0] 
+                : params["tokenId"];
               
               if (!tokenId) {
                   console.error("Token ID is missing!");

@@ -21,17 +21,22 @@ interface IPAssetsListProps {
 
 const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag }) => {
   const [ipAssets, setIpAssets] = useState<IPAsset[]>([]);
+  const [tokensAmount, setTokensAmount] = useState<number | null>(null);
   const [showCommercialOnly, setShowCommercialOnly] = useState<boolean>(false);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isAllAssetsChecked, setIsAllAssetsChecked] = useState<boolean>(false);
+
 
   useEffect(() => {
     if (address) {
-      fetchNFTContract();
+      getIPAseetsList();
     }
   }, [address]);
 
-  const fetchNFTContract = async () => {
+  const getIPAseetsList = async () => {
     try {
+      setIsLoading(true);
       const nftContract = await getNftContract(address);
       if (nftContract) {
         await fetchIPAssets(nftContract);
@@ -45,17 +50,19 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag }
 
   const fetchIPAssets = async (nftContractAddress: string) => {
     try {
-      const tokensQuantityBigInt = await getMyTokensAmount(
+      const tokensAmountBigInt = await getMyTokensAmount(
         nftContractAddress,
         address
       );
-      const tokensQuantity = Number(tokensQuantityBigInt);
+      const tokensAmount = Number(tokensAmountBigInt);
 
-      if (!tokensQuantity) {
-        throw new Error("There is no token in NFT contract");
+      if (tokensAmount === 0) {
+        setIsLoading(false);
+        setTokensAmount(tokensAmount);
+        setIsAllAssetsChecked(true);
       }
 
-      const assetPromises = Array.from({ length: tokensQuantity }, (_, i) =>
+      const assetPromises = Array.from({ length: tokensAmount }, (_, i) =>
         getIPADataForAssetsList(nftContractAddress, i + 1, isDerivativeFlag)
       );
 
@@ -64,24 +71,25 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag }
       for (let i = 0; i < assetPromises.length; i += maxConcurrent) {
         const batch = assetPromises.slice(i, i + maxConcurrent);
         const batchResults = await Promise.all(batch);
-
         const newAssets = batchResults.filter(
           (asset): asset is IPAsset => asset !== null
         );
-
         setIpAssets((prevAssets) => {
           const allAssets = [...prevAssets, ...newAssets];
-
           const uniqueAssetsMap = new Map<string, IPAsset>();
           allAssets.forEach((asset) => {
             uniqueAssetsMap.set(asset.id, asset);
           });
-
+          setIsLoading(false);
           return Array.from(uniqueAssetsMap.values());
         });
+        if (i === 0) setIsLoading(false);
       }
+      setIsAllAssetsChecked(true);
     } catch (error) {
       console.error("Error in fetching IPA:", error);
+      setIsLoading(false);
+      setIsAllAssetsChecked(true);
     }
   };
 
@@ -91,53 +99,55 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag }
 
   return (
     <div>
-      {
-        !isDerivativeFlag && (
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowCommercialOnly(!showCommercialOnly)}
-              className="bg-gray-600 text-white font-semibold px-4 py-2 mb-2 rounded hover:bg-indigo-700 transition-colors"
-            >
-              {showCommercialOnly ? "Show all" : "Show only commercial"}
-            </button>
-          </div>
-        )
-      }
-      {filteredAssets.length === 0 && (
+      {isLoading && ipAssets.length === 0 ? (
         <div className="text-center p-8">Loading...</div>
-      )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-        {filteredAssets.map((asset, index) => (
-          <div
-            key={asset.id}
-            className="bg-white rounded p-4 cursor-pointer hover:bg-gray-300"
-            onClick={() => router.push(`/ipa/${asset.id}`)}
-          >
-            <div className="relative w-full h-48 md:h-64">
-              <Image
-                src={
-                  asset.imageUrl.startsWith("ipfs://")
-                    ? asset.imageUrl.replace(
-                      "ipfs://",
-                      "https://ipfs.io/ipfs/"
-                    )
-                    : asset.imageUrl
-                }
-                alt={asset.name}
-                fill
-                className="object-contain rounded"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                priority={index < 2}
-                loading={index < 2 ? undefined : "lazy"}
-              />
+      ) : isDerivativeFlag && isAllAssetsChecked && ipAssets.length === 0 ? (
+        <div className="text-center p-8">No derivatives found</div>
+      ) : tokensAmount === 0 ? (
+        <div className="text-center p-8">No assets found</div>
+      ) : (
+        <>
+          {!isDerivativeFlag && (
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowCommercialOnly(!showCommercialOnly)}
+                className="bg-gray-600 text-white font-semibold px-4 py-2 mb-2 rounded hover:bg-indigo-700 transition-colors"
+              >
+                {showCommercialOnly ? "Show all" : "Show only commercial"}
+              </button>
             </div>
-            <h2 className="text-xl text-center font-bold mb-2">{asset.name}</h2>
-            {asset.licenseId && asset.licenseId !== 1 && (
-              <p className="text-gray-600 text-center">(commercial license)</p>
-            )}
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+            {filteredAssets.map((asset, index) => (
+              <div
+                key={asset.id}
+                className="bg-white rounded p-4 cursor-pointer hover:bg-gray-300"
+                onClick={() => router.push(`/ipa/${asset.id}`)}
+              >
+                <div className="relative w-full h-48 md:h-64">
+                  <Image
+                    src={
+                      asset.imageUrl.startsWith("ipfs://")
+                        ? asset.imageUrl.replace("ipfs://", "https://ipfs.io/ipfs/")
+                        : asset.imageUrl
+                    }
+                    alt={asset.name}
+                    fill
+                    className="object-contain rounded"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    priority={index < 2}
+                    loading={index < 2 ? undefined : "lazy"}
+                  />
+                </div>
+                <h2 className="text-xl text-center font-bold mb-2">{asset.name}</h2>
+                {asset.licenseId && asset.licenseId !== 1 && (
+                  <p className="text-gray-600 text-center">(commercial license)</p>
+                )}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 };

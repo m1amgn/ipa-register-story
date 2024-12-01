@@ -82,7 +82,6 @@ const MyLicenseTokensPage = () => {
                         [tokenId]
                     );
 
-                    // Получение названия и изображения
                     const { name, imageUrl } = await getNameAndImageIPA(metadata.licensorIpId);
 
                     return {

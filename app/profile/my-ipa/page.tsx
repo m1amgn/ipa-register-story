@@ -6,6 +6,7 @@ import IPAssetsList from '@/components/IPAssetsList';
 import { useAccount } from 'wagmi';
 import RegisterIpaButton from '@/components/buttons/RegisterIpaButton';
 
+
 const MyIPAssets: React.FC = () => {
   const { address, isConnected } = useAccount();
 

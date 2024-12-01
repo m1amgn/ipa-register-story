@@ -1,5 +1,4 @@
 import { createPublicClient, http } from "viem";
-
 import { odyssey } from "@story-protocol/core-sdk";
 
 const baseConfig = {

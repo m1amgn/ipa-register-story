@@ -36,7 +36,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-
   const apiKey = request.headers.get('x-api-key');
   if (apiKey !== API_KEY) {
     return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });

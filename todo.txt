@@ -19,9 +19,11 @@ const derivativeTokenId = await mintNFT(account.address, 'test-uri')
         `Derivative IPA created at transaction hash ${registerIpDerivativeResponse.txHash}, IPA ID: ${registerIpDerivativeResponse.ipId}`
     )
 
-2. Relationship in derivative
+2. royaltyPolicy and relationships in derivative
 
-3. Add API KEYS for api get requests
+3. Make loading+Suspense and error+global error components in app folder.
 
-4. royaltyPolicy?
+4. Add API KEYS for api get requests
+
+
 
