@@ -1,5 +1,5 @@
 import React from "react";
-import IPAssetsList from "@/components/IPAssetsList";
+import IPAssetsList from "@/components/AssetsList";
 
 interface OwnerData {
   [address: `0x${string}`]: string;
@@ -44,7 +44,7 @@ export default async function IPAAssetsPage() {
           <h2 className="text-2xl font-bold mb-4">
             Address: {address} Contract: {contract}
           </h2>
-          <IPAssetsList address={address as `0x${string}`} isDerivativeFlag={false} />
+          <IPAssetsList address={address as `0x${string}`} isDerivativeFlag={false} isNeedShowCommercial={true} />
         </div>
       ))}
     </div>

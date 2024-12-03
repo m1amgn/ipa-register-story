@@ -27,7 +27,6 @@ const Navigation: React.FC = () => {
     };
   }, []);
 
-
   return (
     <nav className="bg-gray-600 text-white font-medium py-4 px-2">
       <div className="container mx-auto flex items-center justify-between">
@@ -76,7 +75,6 @@ const Navigation: React.FC = () => {
           <Link href="/register-ipa" className="hover:text-gray-300">
             Register IPA
           </Link>
-
         </div>
       </div>
     </nav>

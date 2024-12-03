@@ -2,7 +2,7 @@
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
-import IPAssetsList from '@/components/IPAssetsList';
+import IPAssetsList from '@/components/AssetsList';
 import { useAccount } from 'wagmi';
 import RegisterIpaButton from '@/components/buttons/RegisterIpaButton';
 
@@ -24,7 +24,7 @@ const MyIPAssets: React.FC = () => {
           <>
             <RegisterIpaButton />
             <h1 className="text-3xl font-bold text-center mb-8">My IP Assets</h1>
-            <IPAssetsList address={address} isDerivativeFlag={false}/>
+            <IPAssetsList address={address} isDerivativeFlag={false} isNeedShowCommercial={true}/>
           </>
         ) : (
           <p className="text-center">Please connect your wallet to view your IP assets.</p>

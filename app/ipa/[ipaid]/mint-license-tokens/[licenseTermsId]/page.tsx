@@ -8,7 +8,7 @@ import { setupStoryClient } from "@/utils/resources/storyClient";
 import { getIPAOwner } from '@/utils/get-data/getIPAOwner';
 import { checksumAddress } from 'viem';
 import BackToIPAButton from '@/components/buttons/BackToIPAButton';
-import { sendApproveTransaction } from '@/utils/send-transactions/sendApproveTransaction';
+import { feeApproveTransaction } from '@/utils/approve-transactions/feeApproveTransaction';
 import { royaltyModuleContractAddress } from '@/utils/contracts/royaltyModuleContract';
 
 
@@ -91,7 +91,7 @@ const MintLicenseTokensPage: React.FC = () => {
         try {
             setIsProcessing(true);
             if (mintingFee !== BigInt(0)) {
-                const approveReceipt = await sendApproveTransaction(wallet, royaltyModuleContractAddress, mintingFee, feeCurrency, licenseTokenAmount)
+                const approveReceipt = await feeApproveTransaction(wallet, royaltyModuleContractAddress, mintingFee, feeCurrency, licenseTokenAmount)
                 if (!approveReceipt || approveReceipt.status !== 'success') {
                     setError("Approve transaction failed.");
                     setIsProcessing(false);

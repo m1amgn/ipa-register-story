@@ -11,7 +11,7 @@ import { uploadFileToIPFS } from "@/utils/api-utils/uploadFileToIPFS";
 import { uploadJSONToIPFS } from "@/utils/api-utils/uploadJSONToIPFS";
 import { getNftContract } from "@/utils/api-utils/getNftContract";
 import { updateNftContract } from "@/utils/api-utils/updateNftContract";
-import { sendApproveTransaction } from "@/utils/send-transactions/sendApproveTransaction";
+import { feeApproveTransaction } from "@/utils/approve-transactions/feeApproveTransaction";
 import { derivativeWorkflowsContractAddress } from "@/utils/contracts/derivativeWorkflowsContracts";
 import BackToIPAButton from "@/components/buttons/BackToIPAButton";
 
@@ -177,7 +177,7 @@ const RegisterDerivative: React.FC = () => {
 
         try {
             if (mintingFee !== BigInt(0)) {
-                const approveReceipt = await sendApproveTransaction(wallet, derivativeWorkflowsContractAddress, mintingFee, feeCurrency, 1)
+                const approveReceipt = await feeApproveTransaction(wallet, derivativeWorkflowsContractAddress, mintingFee, feeCurrency, 1)
                 if (!approveReceipt || approveReceipt.status !== 'success') {
                     setErrorMessage("Approve transaction failed.");
                     setLoading(false);
@@ -236,7 +236,7 @@ const RegisterDerivative: React.FC = () => {
             console.log("Response:", response);
 
             alert(`Completed at transaction hash ${response.txHash}, childIpId ${response.childIpId}, Token ID: ${response.tokenId}`);
-            // router.push(`/profile/my-ipa`);
+            router.push(`/profile/my-derivatives`);
 
         } catch (error: any) {
             console.error("Error in registration IPA:", error);

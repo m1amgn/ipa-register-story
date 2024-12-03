@@ -1,29 +1,12 @@
-1. Create derivative (need approve):
-const derivativeTokenId = await mintNFT(account.address, 'test-uri')
-    const registerIpDerivativeResponse = await client.ipAsset.registerDerivativeIp({
-        nftContract: NFTContractAddress, // an nft contract in my code
-        tokenId: derivativeTokenId!,
-        derivData: {
-            parentIpIds: [registerIpResponse.ipId as Address],
-            licenseTermsIds: [registerIpResponse.licenseTermsId as bigint],
-        },
-        ipMetadata: {
-            ipMetadataURI: 'test-uri',
-            ipMetadataHash: toHex('test-metadata-hash', { size: 32 }),
-            nftMetadataHash: toHex('test-nft-metadata-hash', { size: 32 }),
-            nftMetadataURI: 'test-nft-uri',
-        },
-        txOptions: { waitForTransaction: true },
-    })
-    console.log(
-        `Derivative IPA created at transaction hash ${registerIpDerivativeResponse.txHash}, IPA ID: ${registerIpDerivativeResponse.ipId}`
-    )
+1. Check buttons mint license tokens and make derivative.
 
 2. royaltyPolicy and relationships in derivative
 
-3. Make loading+Suspense and error+global error components in app folder.
+3. Start to write royalty service.
 
-4. Add API KEYS for api get requests
+4. Make loading+Suspense and error+global error components in app folder.
 
+5. Add API KEYS for api get requests
 
+6. Think about personal license: only owner can mint license tokens and send someone, but anyone can't make derivative directly.
 

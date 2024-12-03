@@ -214,6 +214,7 @@ const MyLicenseTokensPage = () => {
                         </button>
                         {tokenAssetData && (
                             <>
+                                <p className="text-left text-xl font-bold">Parent IPA</p>
                                 <AssetDetails ipaid={selectedToken.licensorIpId} />
                                 <LicenseDetails ipaid={selectedToken.licensorIpId} isConnected={false} isOwner={false} showDerivativeButton={false} />
                             </>

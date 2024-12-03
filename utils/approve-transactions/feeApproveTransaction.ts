@@ -1,11 +1,11 @@
 import { SUSDContractABI, SUSDContractAddress } from "@/utils/contracts/SUSDContract";
-import { checksumAddress, encodeFunctionData, toHex } from "viem";
+import { checksumAddress, encodeFunctionData } from "viem";
 import { publicClient } from "../resources/publicClient";
 import { WalletClient, Account, Chain, Abi } from "viem";
 import { WIPContractABI, WIPContractAddress } from "@/utils/contracts/WIPContract";
 
 
-export const sendApproveTransaction = async (
+export const feeApproveTransaction = async (
   wallet: WalletClient,
   spenderAddress: `0x${string}`,
   mintingFee: bigint,
@@ -48,7 +48,6 @@ export const sendApproveTransaction = async (
 
   try {
     const gasEstimate = await publicClient.estimateGas(baseTransaction);
-    console.log(`Estimated Gas: ${gasEstimate}`);
 
     const transaction = {
       ...baseTransaction,

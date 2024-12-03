@@ -4,14 +4,15 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useWalletClient } from "wagmi";
 import { createHash } from "crypto";
-import { IpMetadata, PIL_TYPE } from "@story-protocol/core-sdk";
+import { IpMetadata } from "@story-protocol/core-sdk";
 import { useParams, useRouter } from 'next/navigation';
 import { setupStoryClient } from "@/utils/resources/storyClient";
 import { uploadFileToIPFS } from "@/utils/api-utils/uploadFileToIPFS";
 import { uploadJSONToIPFS } from "@/utils/api-utils/uploadJSONToIPFS";
-import { currencyTokensAddress } from "@/utils/resources/currencyTokenAddress";
 import { getNftContract } from "@/utils/api-utils/getNftContract";
 import { updateNftContract } from "@/utils/api-utils/updateNftContract";
+import { licenseTokenBurnApproveTransaction } from "@/utils/approve-transactions/licenseTokenBurnApproveTransaction";
+import { derivativeWorkflowsContractAddress } from "@/utils/contracts/derivativeWorkflowsContracts";
 
 
 const RegisterDerivativeWithLicenseTokenPage: React.FC = () => {
@@ -19,7 +20,7 @@ const RegisterDerivativeWithLicenseTokenPage: React.FC = () => {
     const { data: wallet } = useWalletClient();
     const router = useRouter();
     const params = useParams();
-    
+
     const [formData, setFormData] = useState<{
         title: string;
         description: string;
@@ -170,11 +171,30 @@ const RegisterDerivativeWithLicenseTokenPage: React.FC = () => {
         }
 
         try {
+            const tokenIdFromParams = Array.isArray(params["tokenId"])
+                ? params["tokenId"][0]
+                : params["tokenId"];
+
+            if (!tokenIdFromParams) {
+                console.error("Token ID is missing!");
+                return null;
+            }
+
             if (!formData.imageFile) {
                 setErrorMessage("Please select an image file.");
                 setLoading(false);
                 return;
             }
+
+            const tokenId = BigInt(tokenIdFromParams);
+
+            const approveReceipt = await licenseTokenBurnApproveTransaction(wallet, derivativeWorkflowsContractAddress, tokenId)
+            if (!approveReceipt || approveReceipt.status !== 'success') {
+                setErrorMessage("Approve transaction failed.");
+                setLoading(false);
+                return;
+            }
+            alert(`Approve transaction confirmed. Hash: ${approveReceipt.transactionHash}`);
 
             const imageIpfsHash = await uploadFileToIPFS(formData.imageFile);
 
@@ -200,15 +220,6 @@ const RegisterDerivativeWithLicenseTokenPage: React.FC = () => {
             const nftHash = `0x${createHash("sha256")
                 .update(JSON.stringify(nftMetadata))
                 .digest("hex")}`;
-
-            const tokenId = Array.isArray(params["tokenId"]) 
-                ? params["tokenId"][0] 
-                : params["tokenId"];
-              
-              if (!tokenId) {
-                  console.error("Token ID is missing!");
-                  return null;
-              }
 
             const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivativeWithLicenseTokens({
                 spgNftContract: nftContract as `0x${string}`,

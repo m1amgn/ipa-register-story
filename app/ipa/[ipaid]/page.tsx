@@ -9,6 +9,10 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { getIPAMetadata } from '@/utils/get-data/getIPAMetadata';
 import AssetDetails from '@/components/AssetDetails';
 import { useParams } from 'next/navigation';
+import { getParentIpCount } from '@/utils/get-data/getParentIpCount';
+import ParentsList from '@/components/ParentsList';
+import DerivativesList from '@/components/DerivativesList';
+import { getDerivativeIpCount } from '@/utils/get-data/getDerivativeIpCount';
 
 
 const AssetDetailsPage: React.FC = () => {
@@ -18,11 +22,13 @@ const AssetDetailsPage: React.FC = () => {
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [parentIpCount, setParentIpCount] = useState<number>(0);
+  const [derivativeIpCount, setDerivativeIpCount] = useState<number>(0);
+
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-
       try {
         if (!ipaid || typeof ipaid !== 'string') {
           setError('Invalid IP asset ID.');
@@ -43,6 +49,15 @@ const AssetDetailsPage: React.FC = () => {
           setIsLoading(false);
           return;
         }
+
+        const parentIpCountBigInt = await getParentIpCount(ipaid);
+        const parentIpCount = Number(parentIpCountBigInt);
+        setParentIpCount(parentIpCount);
+
+        const derivativeIpCountBigInt = await getDerivativeIpCount(ipaid);
+        const derivativeIpCount = Number(derivativeIpCountBigInt);
+        setDerivativeIpCount(derivativeIpCount);
+
       } catch (err) {
         console.error('Error fetching asset metadata:', err);
         setError('Error fetching asset metadata.');
@@ -71,21 +86,54 @@ const AssetDetailsPage: React.FC = () => {
           <p>Connect wallet to manage IP Asset</p>
         </div>
       )}
-      <div className="container mx-auto pb-4">
-        <AssetDetails ipaid={ipaid} />
-        {isConnected && address && isOwner && (
-          <div className='text-center rounded mb-4'>
-            <AddCommercialLicenseButton ipaid={ipaid} />
+      <div className="container mx-auto pb-4 pt-2">
+        <div className="container pb-6">
+          <AssetDetails ipaid={ipaid} />
+        </div>
+        {parentIpCount !== 0 && derivativeIpCount === 0 && (
+          <div
+            className="bg-gray-100"
+          >
+            <h2 className="text-xl text-center font-bold mb-2">Parents</h2>
+            <ParentsList ipaid={ipaid} assetsCount={parentIpCount} />
           </div>
         )}
+        {derivativeIpCount !== 0 && parentIpCount === 0 && (
+          <div
+            className="bg-gray-100"
+          >
+            <h2 className="text-xl text-center font-bold mb-2">Derivatives</h2>
+            <DerivativesList ipaid={ipaid} assetsCount={derivativeIpCount} />
+          </div>
+        )}
+        {parentIpCount !== 0 && derivativeIpCount !== 0 && (
+          <div
+            className="bg-gray-100 grid grid-cols-2"
+          >
+            <div>
+              <h2 className="text-xl font-bold mb-2">Parents</h2>
+              <ParentsList ipaid={ipaid} assetsCount={parentIpCount} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold mb-2">Derivatives</h2>
+              <DerivativesList ipaid={ipaid} assetsCount={derivativeIpCount} />
+            </div>
+          </div>
+        )}
+
         {isConnected ? (
           <div>
             <LicenseDetails ipaid={ipaid} isConnected={isConnected} isOwner={isOwner} showDerivativeButton={true} />
           </div>
         ) : (
           <div>
-          <LicenseDetails ipaid={ipaid} isConnected={isConnected} isOwner={isOwner} showDerivativeButton={false} />
-        </div>
+            <LicenseDetails ipaid={ipaid} isConnected={isConnected} isOwner={isOwner} showDerivativeButton={false} />
+          </div>
+        )}
+        {parentIpCount === 0 && isConnected && address && isOwner && (
+          <div className='text-left rounded mb-4'>
+            <AddCommercialLicenseButton ipaid={ipaid} />
+          </div>
         )}
       </div>
     </>

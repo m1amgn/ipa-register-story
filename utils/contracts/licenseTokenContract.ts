@@ -1,4 +1,4 @@
-export const licenseTokenContractAddress = "0xB138aEd64814F2845554f9DBB116491a077eEB2D";
+export const licenseTokenContractAddress = "0xB138aEd64814F2845554f9DBB116491a077eEB2D" as `0x${string}`;
 
 export const licenseTokenContractABI = [
     {

@@ -493,7 +493,7 @@ const RegisterIpaPage: React.FC = () => {
               {formData.commercialLicense && (
                 <div className="mt-4">
                   <p className="text-sm text-red-700 mb-6">
-                    You can select the standard license terms or uncheck Commercial License and make custom terms after registering your asset. <strong>You can add custom terms on your asset's My IPA page.</strong>
+                    You can select the standard license terms below or uncheck Commercial License and make custom terms after registering your asset. <strong>You can add custom terms to your asset in Profile.</strong>
                   </p>
                   <div className="flex space-x-4">
                     <label

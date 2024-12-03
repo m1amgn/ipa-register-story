@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { getNftContract } from "@/utils/api-utils/getNftContract";
 import { getIPADataForAssetsList } from "@/utils/get-data/getIPADataForAssetsList";
 import { getMyTokensAmount } from "@/utils/get-data/getMyTokensAmount";
+import IPAssetCard from '@/components/AssetCard';
 
 interface IPAsset {
   id: `0x${string}`;
@@ -17,22 +16,25 @@ interface IPAsset {
 interface IPAssetsListProps {
   address: `0x${string}`;
   isDerivativeFlag: boolean;
+  isNeedShowCommercial: boolean;
 }
 
-const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag }) => {
+const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag, isNeedShowCommercial }) => {
   const [ipAssets, setIpAssets] = useState<IPAsset[]>([]);
   const [tokensAmount, setTokensAmount] = useState<number | null>(null);
   const [showCommercialOnly, setShowCommercialOnly] = useState<boolean>(false);
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAllAssetsChecked, setIsAllAssetsChecked] = useState<boolean>(false);
-
 
   useEffect(() => {
     if (address) {
       getIPAseetsList();
     }
   }, [address]);
+
+  if (!address) {
+    return null;
+  }
 
   const getIPAseetsList = async () => {
     try {
@@ -117,33 +119,13 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag }
               </button>
             </div>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {filteredAssets.map((asset, index) => (
-              <div
-                key={asset.id}
-                className="bg-white rounded p-4 cursor-pointer hover:bg-gray-300"
-                onClick={() => router.push(`/ipa/${asset.id}`)}
-              >
-                <div className="relative w-full h-48 md:h-64">
-                  <Image
-                    src={
-                      asset.imageUrl.startsWith("ipfs://")
-                        ? asset.imageUrl.replace("ipfs://", "https://ipfs.io/ipfs/")
-                        : asset.imageUrl
-                    }
-                    alt={asset.name}
-                    fill
-                    className="object-contain rounded"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    priority={index < 2}
-                    loading={index < 2 ? undefined : "lazy"}
-                  />
-                </div>
-                <h2 className="text-xl text-center font-bold mb-2">{asset.name}</h2>
-                {asset.licenseId && asset.licenseId !== 1 && (
-                  <p className="text-gray-600 text-center">(commercial license)</p>
-                )}
-              </div>
+              <IPAssetCard
+                key={`${asset.id}-${index}`}
+                IPAssetDetails={asset}
+                index={index}
+                isNeedShowCommercial={isNeedShowCommercial} />
             ))}
           </div>
         </>
