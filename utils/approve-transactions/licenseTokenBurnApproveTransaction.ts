@@ -1,7 +1,7 @@
 import { encodeFunctionData } from "viem";
-import { publicClient } from "../resources/publicClient";
+import { publicClient } from "@/utils/resources/publicClient";
 import { WalletClient, Account, Chain } from "viem";
-import { licenseTokenContractAddress, licenseTokenContractABI } from "../contracts/licenseTokenContract";
+import { licenseTokenContractAddress, licenseTokenContractABI } from "@/utils/contracts/licenseTokenContract";
 
 
 export const licenseTokenBurnApproveTransaction = async (

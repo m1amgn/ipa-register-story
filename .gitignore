@@ -3,7 +3,6 @@
 # dependencies
 /node_modules
 /some_scripts
-spg_nft_owners.json
 /.pnp
 .pnp.js
 .yarn/install-state.gz
@@ -36,3 +35,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+spg_nft_owners.json
+last_derivatives.json
+last_ipas.json

@@ -4,10 +4,9 @@ import React, { useState, ChangeEvent, FormEvent, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount, useWalletClient } from "wagmi";
 import { LicenseTerms } from "@story-protocol/core-sdk";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { setupStoryClient } from "@/utils/resources/storyClient";
 import { checksumAddress } from "viem";
-import { getIPAOwner } from "@/utils/get-data/getIPAOwner";
+import { getIPAOwner } from "@/utils/get-data/assets/getIPAOwner";
 import { currencyTokensAddress } from "@/utils/resources/currencyTokenAddress";
 import BackToIPAButton from "@/components/buttons/BackToIPAButton";
 import { useParams } from 'next/navigation';
@@ -171,7 +170,6 @@ const AddCommercialLicensePage: React.FC = () => {
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
             <div className="flex justify-between items-center mb-4">
                 <BackToIPAButton ipaid={ipaid} />
-                <ConnectButton />
             </div>
             <div className="max-w-lg w-full mx-auto bg-white rounded-lg shadow-lg p-6">
                 {error && (

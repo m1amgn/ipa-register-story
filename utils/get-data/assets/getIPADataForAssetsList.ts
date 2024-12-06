@@ -1,7 +1,7 @@
-import { checkIsDerivativeIPA } from "@/utils/get-data/checkIsDerivativeIPA";
-import { getNameAndImageIPA } from "@/utils/get-data/getNameAndImageIPA";
-import { getLicenseTermsData } from "@/utils/get-data/getLicenseTermsData";
-import { getIPAssetId } from "@/utils/get-data/getIPAssetId";
+import { checkIsDerivativeIPA } from "@/utils/get-data/derivatives/checkIsDerivativeIPA";
+import { getNameAndImageIPA } from "@/utils/get-data/assets/getNameAndImageIPA";
+import { getLicenseTermsData } from "@/utils/get-data/assets/getLicenseTermsData";
+import { getIPAssetId } from "@/utils/get-data/assets/getIPAssetId";
 
 interface IPAsset {
     id: `0x${string}`;

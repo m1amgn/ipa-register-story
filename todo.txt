@@ -1,8 +1,11 @@
-1. Check buttons mint license tokens and make derivative.
+1. Start to write royalty service.
+See your SUSD balance here: https://odyssey.storyscan.xyz/address/0xC0F6E387aC0B324Ec18EAcf22EE7271207dCE3d5?tab=read_write_contract#0x70a08231. You must have at least 2 SUSD since the script requires that
+
+Make sure you approved the RoyaltyModule (0xEa6eD700b11DfF703665CCAF55887ca56134Ae3B) to spend at least 2 SUSD on your behalf (again, because that's what's being paid): https://odyssey.storyscan.xyz/address/0xC0F6E387aC0B324Ec18EAcf22EE7271207dCE3d5?tab=read_write_contract#0x095ea7b3
 
 2. royaltyPolicy and relationships in derivative
 
-3. Start to write royalty service.
+3. Check buttons mint license tokens and make derivative.
 
 4. Make loading+Suspense and error+global error components in app folder.
 

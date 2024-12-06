@@ -1,8 +1,7 @@
 "use client";
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
-import IPAssetsList from '@/components/AssetsList';
+import IPAssetsList from '@/components/assets-list/AssetsList';
 import { useAccount } from 'wagmi';
 
 const MyDerivatives: React.FC = () => {
@@ -14,15 +13,11 @@ const MyDerivatives: React.FC = () => {
 
   return (
     <div>
-      <div className="min-h-screen bg-gray-100 p-8">
-        <div className="flex justify-end">
-          <ConnectButton />
-        </div>
+      <div className="bg-gray-100 p-8">
         {isConnected && address ? (
-          <>
-            <h1 className="text-3xl font-bold text-center mb-8">My Derivatives</h1>
+          <div className='mt-16'>
             <IPAssetsList address={address} isDerivativeFlag={true} isNeedShowCommercial={false} />
-          </>
+          </div>
         ) : (
           <p className="text-center">Please connect your wallet to view your Derivatives.</p>
         )}

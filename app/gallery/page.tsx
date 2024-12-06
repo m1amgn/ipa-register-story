@@ -1,52 +1,61 @@
-import React from "react";
-import IPAssetsList from "@/components/AssetsList";
+'use client';
 
-interface OwnerData {
-  [address: `0x${string}`]: string;
-}
+import { useState, useEffect } from 'react';
+import IPAsList from '@/components/gallery-components/IPAsList';
+import DerivativesList from '@/components/gallery-components/DerivativesList';
+import NFTContractsList from '@/components/gallery-components/NFTContractsList';
 
-async function fetchOwnersData(): Promise<OwnerData | null> {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/get_existing_contracts`;
+const TABS = {
+  IPAS: 'ipas',
+  DERIVATIVES: 'derivatives',
+  CONTRACTS: 'contracts',
+};
 
-  try {
-    const response = await fetch(apiUrl, {
-      next: { revalidate: 60 },
-    });
-
-    if (!response.ok) {
-      console.error(`API error: ${response.statusText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error in fetchOwnersData:", error);
-    return null;
-  }
-}
-
-export default async function IPAAssetsPage() {
-  const ownersData = await fetchOwnersData();
-
-  if (!ownersData) {
-    return <div className="text-center p-8 text-gray-500">Error: Failed to fetch IP assets data.</div>;
-  }
-
-  if (Object.keys(ownersData).length === 0) {
-    return <div className="text-center p-8">No IP assets found.</div>;
-  }
+export default function IPAAssetsPage() {
+  const [activeTab, setActiveTab] = useState(TABS.IPAS);
 
   return (
-    <div className="space-y-8 p-8">
-      {Object.entries(ownersData).map(([address, contract]) => (
-        <div key={address} className="bg-white shadow rounded p-8 mb-6">
-          <h2 className="text-2xl font-bold mb-4">
-            Address: {address} Contract: {contract}
-          </h2>
-          <IPAssetsList address={address as `0x${string}`} isDerivativeFlag={false} isNeedShowCommercial={true} />
-        </div>
-      ))}
+    <div className="flex bg-gray-100 min-h-screen">
+      <div className="w-1/6 bg-gray-100 p-4 border-r border-solid border-gray-300">
+        <ul className="space-y-2">
+          <li>
+            <button
+              onClick={() => setActiveTab(TABS.IPAS)}
+              className={`block w-full text-sm text-left p-2 rounded ${
+                activeTab === TABS.IPAS ? 'bg-gray-600 text-white' : 'bg-gray-100'
+              }`}
+            >
+              Recent IP Assets
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveTab(TABS.DERIVATIVES)}
+              className={`block w-full text-sm text-left p-2 rounded ${
+                activeTab === TABS.DERIVATIVES ? 'bg-gray-600 text-white' : 'bg-gray-100'
+              }`}
+            >
+              Recent Derivatives
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveTab(TABS.CONTRACTS)}
+              className={`block w-full text-sm text-left p-2 rounded ${
+                activeTab === TABS.CONTRACTS ? 'bg-gray-600 text-white' : 'bg-gray-100'
+              }`}
+            >
+              Recent NFT Contracts
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div className="w-3/4 p-4 ml-4">
+        {activeTab === TABS.IPAS && <IPAsList />}
+        {activeTab === TABS.DERIVATIVES && <DerivativesList />}
+        {activeTab === TABS.CONTRACTS && <NFTContractsList />}
+      </div>
     </div>
   );
 }

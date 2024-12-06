@@ -3,13 +3,12 @@ import { Abi } from "viem";
 import { readContracts } from "@/utils/get-data/readContracts";
 
 
-export const getDerivativeIpCount = async (ipaid: `0x${string}`): Promise<bigint> => {
-  const derivativeIpCount = await readContracts(
+export const getParentIpCount = async (ipaid: `0x${string}`): Promise<bigint> => {
+  const parentIpCount = await readContracts(
     licenseRegistryAddress as `0x${string}`,
     licenseRegistryABI as Abi,
-    "getDerivativeIpCount",
+    "getParentIpCount",
     [ipaid]
   );
-  console.log(derivativeIpCount);
-  return derivativeIpCount;
+  return parentIpCount;
 };

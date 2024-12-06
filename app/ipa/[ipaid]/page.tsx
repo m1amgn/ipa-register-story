@@ -2,17 +2,16 @@
 
 import React, { useEffect, useState, use } from 'react';
 import { useAccount } from 'wagmi';
-import LicenseDetails from '@/components/LicenseDetails';
+import LicenseDetails from '@/components/asset-details/LicenseDetails';
 import AddCommercialLicenseButton from '@/components/buttons/AddCommercialLicenseButton';
 import { checksumAddress } from 'viem';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { getIPAMetadata } from '@/utils/get-data/getIPAMetadata';
-import AssetDetails from '@/components/AssetDetails';
+import { getIPAMetadata } from '@/utils/get-data/assets/getIPAMetadata';
+import AssetDetails from '@/components/asset-details/AssetDetails';
 import { useParams } from 'next/navigation';
-import { getParentIpCount } from '@/utils/get-data/getParentIpCount';
-import ParentsList from '@/components/ParentsList';
-import DerivativesList from '@/components/DerivativesList';
-import { getDerivativeIpCount } from '@/utils/get-data/getDerivativeIpCount';
+import { getParentIpCount } from '@/utils/get-data/parents/getParentIpCount';
+import ParentsList from '@/components/assets-list/ParentsList';
+import DerivativesList from '@/components/assets-list/DerivativesList';
+import { getDerivativeIpCount } from '@/utils/get-data/derivatives/getDerivativeIpCount';
 
 
 const AssetDetailsPage: React.FC = () => {
@@ -69,7 +68,7 @@ const AssetDetailsPage: React.FC = () => {
   }, [ipaid, address]);
 
   if (isLoading) {
-    return <div className="text-center p-8">Loading your IP asset...</div>;
+    return <div className="text-center p-8">Loading...</div>;
   }
 
   if (error) {
@@ -77,67 +76,64 @@ const AssetDetailsPage: React.FC = () => {
   }
 
   return (
-    <>
-      <div className="flex justify-end mb-2 mt-4 mr-2">
-        <ConnectButton />
-      </div>
+    <div className="flex flex-col flex-grow h-full">
       {!isConnected && (
-        <div className='flex text-gray-500 text-sm justify-end mb-2 mt-2 mr-3'>
+        <div className="flex text-red-800 text-sm font-bold justify-end mb-6 mt-6 mr-6">
           <p>Connect wallet to manage IP Asset</p>
         </div>
       )}
-      <div className="container mx-auto pb-4 pt-2">
-        <div className="container pb-6">
-          <AssetDetails ipaid={ipaid} />
-        </div>
+      <div className="flex flex-col flex-grow h-full container mx-auto pt-2">
+        <AssetDetails ipaid={ipaid} />
         {parentIpCount !== 0 && derivativeIpCount === 0 && (
-          <div
-            className="bg-gray-100"
-          >
-            <h2 className="text-xl text-center font-bold mb-2">Parents</h2>
+          <div className="bg-gray-100 border-solid border-y-2 border-gray-300">
             <ParentsList ipaid={ipaid} assetsCount={parentIpCount} />
           </div>
         )}
         {derivativeIpCount !== 0 && parentIpCount === 0 && (
-          <div
-            className="bg-gray-100"
-          >
-            <h2 className="text-xl text-center font-bold mb-2">Derivatives</h2>
+          <div className="bg-gray-100 border-solid border-y-2 border-gray-300">
             <DerivativesList ipaid={ipaid} assetsCount={derivativeIpCount} />
           </div>
         )}
         {parentIpCount !== 0 && derivativeIpCount !== 0 && (
-          <div
-            className="bg-gray-100 grid grid-cols-2"
-          >
+          <div className="bg-gray-100 grid grid-cols-2 border-solid border-y-2 border-gray-300">
             <div>
-              <h2 className="text-xl font-bold mb-2">Parents</h2>
               <ParentsList ipaid={ipaid} assetsCount={parentIpCount} />
             </div>
             <div>
-              <h2 className="text-xl font-bold mb-2">Derivatives</h2>
               <DerivativesList ipaid={ipaid} assetsCount={derivativeIpCount} />
             </div>
           </div>
         )}
-
         {isConnected ? (
-          <div>
-            <LicenseDetails ipaid={ipaid} isConnected={isConnected} isOwner={isOwner} showDerivativeButton={true} />
+          <div className='flex flex-col flex-grow h-full'>
+            <LicenseDetails
+              ipaid={ipaid}
+              isConnected={isConnected}
+              isOwner={isOwner}
+              showDerivativeButton={true}
+            />
           </div>
         ) : (
-          <div>
-            <LicenseDetails ipaid={ipaid} isConnected={isConnected} isOwner={isOwner} showDerivativeButton={false} />
+          <div className='flex flex-col flex-grow h-full'>
+            <LicenseDetails
+              ipaid={ipaid}
+              isConnected={isConnected}
+              isOwner={isOwner}
+              showDerivativeButton={false}
+            />
           </div>
         )}
         {parentIpCount === 0 && isConnected && address && isOwner && (
-          <div className='text-left rounded mb-4'>
+          <div className="text-left rounded mb-4">
             <AddCommercialLicenseButton ipaid={ipaid} />
           </div>
         )}
       </div>
-    </>
+    </div>
   );
+  
+
+
 };
 
 export default AssetDetailsPage;

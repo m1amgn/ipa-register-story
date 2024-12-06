@@ -2,10 +2,9 @@
 
 import React, { FormEvent, useEffect, useState, use } from 'react';
 import { useAccount, useWalletClient } from 'wagmi';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useRouter, useSearchParams, useParams } from 'next/navigation'
 import { setupStoryClient } from "@/utils/resources/storyClient";
-import { getIPAOwner } from '@/utils/get-data/getIPAOwner';
+import { getIPAOwner } from '@/utils/get-data/assets/getIPAOwner';
 import { checksumAddress } from 'viem';
 import BackToIPAButton from '@/components/buttons/BackToIPAButton';
 import { feeApproveTransaction } from '@/utils/approve-transactions/feeApproveTransaction';
@@ -120,10 +119,9 @@ const MintLicenseTokensPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
+        <div className="bg-gradient-to-b from-gray-50 to-gray-100 p-8">
             <div className="flex justify-between items-center mb-4">
                 <BackToIPAButton ipaid={ipaid} />
-                <ConnectButton />
             </div>
 
             <div className="max-w-lg w-full mx-auto bg-white rounded-lg shadow-lg p-6">

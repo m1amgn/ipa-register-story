@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useWalletClient } from "wagmi";
 import { createHash } from "crypto";
 import { IpMetadata, PIL_TYPE } from "@story-protocol/core-sdk";
@@ -10,7 +9,7 @@ import { setupStoryClient } from "@/utils/resources/storyClient";
 import { uploadFileToIPFS } from "@/utils/api-utils/uploadFileToIPFS";
 import { uploadJSONToIPFS } from "@/utils/api-utils/uploadJSONToIPFS";
 import { currencyTokensAddress } from "@/utils/resources/currencyTokenAddress";
-import { getNftContract } from "@/utils/api-utils/getNftContract";
+import { getNftContractByAddress } from "@/utils/api-utils/getNftContractByAddress";
 import { updateNftContract } from "@/utils/api-utils/updateNftContract";
 
 
@@ -60,7 +59,7 @@ const RegisterIpaPage: React.FC = () => {
     const fetchNftContract = async () => {
       if (isConnected && address) {
         try {
-          const nftContract = await getNftContract(address)
+          const nftContract = await getNftContractByAddress(address)
           if (nftContract) {
             setNftContract(nftContract);
           } else {
@@ -353,10 +352,7 @@ const RegisterIpaPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
-      <div className="flex justify-end mb-4">
-        <ConnectButton />
-      </div>
+    <div className="bg-gradient-to-b from-gray-50 to-gray-100 p-8">
       <div className="max-w-lg w-full mx-auto bg-white rounded-lg shadow-lg p-6">
         {!isConnected || !address ? (
           <p className="text-center text-gray-500">

@@ -1,5 +1,5 @@
-import { getNameAndImageIPA } from "@/utils/get-data/getNameAndImageIPA";
-import { getDerivativeIp } from "@/utils/get-data/getDerivativeIp";
+import { getNameAndImageIPA } from "@/utils/get-data/assets/getNameAndImageIPA";
+import { getDerivativeIp } from "@/utils/get-data/derivatives/getDerivativeIp";
 
 
 interface DerivativesAsset {

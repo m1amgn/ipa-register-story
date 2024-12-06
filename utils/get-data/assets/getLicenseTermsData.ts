@@ -1,5 +1,5 @@
 import { Abi } from "viem";
-import { readContracts } from "./readContracts";
+import { readContracts } from "@/utils/get-data/readContracts";
 import { licenseRegistryABI, licenseRegistryAddress } from "@/utils/contracts/licenseRegistry";
 import { PILicenseTemplateABI, PILicenseTemplateAddress } from "@/utils/contracts/PILicenseTemplate";
 

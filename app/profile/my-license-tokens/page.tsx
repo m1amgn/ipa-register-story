@@ -4,18 +4,17 @@ import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { readContracts } from "@/utils/get-data/readContracts";
 import { licenseTokenContractAddress, licenseTokenContractABI } from "@/utils/contracts/licenseTokenContract";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { getIPAMetadata } from "@/utils/get-data/getIPAMetadata";
-import { getNameAndImageIPA } from "@/utils/get-data/getNameAndImageIPA";
+import { getIPAMetadata } from "@/utils/get-data/assets/getIPAMetadata";
+import { getNameAndImageIPA } from "@/utils/get-data/assets/getNameAndImageIPA";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from 'next/navigation';
 
-const AssetDetails = dynamic(() => import('@/components/AssetDetails'), {
+const AssetDetails = dynamic(() => import('@/components/asset-details/AssetDetails'), {
     ssr: false,
 });
 
-const LicenseDetails = dynamic(() => import('@/components/LicenseDetails'), {
+const LicenseDetails = dynamic(() => import('@/components/asset-details/LicenseDetails'), {
     ssr: false,
 });
 
@@ -127,12 +126,7 @@ const MyLicenseTokensPage = () => {
     }, [isConnected, address]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
-            <div className="flex justify-end">
-                <ConnectButton />
-            </div>
-            <h1 className="text-2xl font-bold mb-8 text-center">My License Tokens</h1>
-
+        <div className="bg-gradient-to-b from-gray-50 to-gray-100 p-8">
             {!isConnected && (
                 <div className="flex justify-center items-center">
                     <p className="text-gray-500">Please connect your wallet to view license tokens.</p>
@@ -150,7 +144,7 @@ const MyLicenseTokensPage = () => {
                     {metadataList.map((metadata, index) => (
                         <div
                             key={index}
-                            className="border p-4 rounded-md bg-gray-200 cursor-pointer text-left hover:bg-gray-300 flex items-center"
+                            className="border p-4 rounded-md cursor-pointer text-left hover:bg-gray-300 flex items-center"
                             onClick={() => handleCardClick(metadata)}
                         >
                             <Image

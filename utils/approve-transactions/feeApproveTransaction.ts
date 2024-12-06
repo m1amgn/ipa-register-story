@@ -1,6 +1,6 @@
 import { SUSDContractABI, SUSDContractAddress } from "@/utils/contracts/SUSDContract";
 import { checksumAddress, encodeFunctionData } from "viem";
-import { publicClient } from "../resources/publicClient";
+import { publicClient } from "@/utils/resources/publicClient";
 import { WalletClient, Account, Chain, Abi } from "viem";
 import { WIPContractABI, WIPContractAddress } from "@/utils/contracts/WIPContract";
 

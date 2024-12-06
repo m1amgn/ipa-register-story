@@ -1,5 +1,5 @@
-import { getNameAndImageIPA } from "@/utils/get-data/getNameAndImageIPA";
-import { getParentIp } from "@/utils/get-data/getParentIp";
+import { getNameAndImageIPA } from "@/utils/get-data/assets/getNameAndImageIPA";
+import { getParentIp } from "@/utils/get-data/parents/getParentIp";
 
 
 interface ParentsAsset {

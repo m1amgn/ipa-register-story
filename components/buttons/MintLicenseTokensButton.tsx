@@ -16,7 +16,7 @@ const MintLicenseTokensButton: React.FC<MintLicenseTokensButtonProps> = ({ ipaid
 
   return (
     <button
-      className="bg-gray-600 text-white font-semibold mt-4 px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
+      className="bg-indigo-600 text-white font-semibold mt-4 px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
       onClick={() => router.push(`/ipa/${ipaid}/mint-license-tokens/${licenseTermsId}?fee=${mintingFee}&currency=${currency}`)}
     >
       Mint License Token

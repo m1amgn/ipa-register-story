@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getNftContract } from "@/utils/api-utils/getNftContract";
-import { getIPADataForAssetsList } from "@/utils/get-data/getIPADataForAssetsList";
-import { getMyTokensAmount } from "@/utils/get-data/getMyTokensAmount";
-import IPAssetCard from '@/components/AssetCard';
+import { getNftContractByAddress } from "@/utils/api-utils/getNftContractByAddress";
+import { getIPADataForAssetsList } from "@/utils/get-data/assets/getIPADataForAssetsList";
+import { getMyTokensAmount } from "@/utils/get-data/assets/getMyTokensAmount";
+import IPAssetCard from '@/components/asset-details/AssetCard';
 
 interface IPAsset {
   id: `0x${string}`;
@@ -28,9 +28,13 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag, 
 
   useEffect(() => {
     if (address) {
+      setIpAssets([]);
+      setTokensAmount(null);
+      setIsAllAssetsChecked(false);
+      setIsLoading(true);
       getIPAseetsList();
     }
-  }, [address]);
+  }, [address, isDerivativeFlag]);
 
   if (!address) {
     return null;
@@ -39,7 +43,7 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag, 
   const getIPAseetsList = async () => {
     try {
       setIsLoading(true);
-      const nftContract = await getNftContract(address);
+      const nftContract = await getNftContractByAddress(address);
       if (nftContract) {
         await fetchIPAssets(nftContract);
       } else {
@@ -113,7 +117,7 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag, 
             <div className="flex justify-end">
               <button
                 onClick={() => setShowCommercialOnly(!showCommercialOnly)}
-                className="bg-gray-600 text-white font-semibold px-4 py-2 mb-2 rounded hover:bg-indigo-700 transition-colors"
+                className="py-2 px-4 rounded-md font-semibold text-sm transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
               >
                 {showCommercialOnly ? "Show all" : "Show only commercial"}
               </button>

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
-import { getDataForParentsList } from "@/utils/get-data/getDataForParentsList";
-import IPAssetCard from "@/components/AssetCard";
+import { getDataForParentsList } from "@/utils/get-data/parents/getDataForParentsList";
+import IPAssetCard from "@/components/asset-details/AssetCard";
 
 
 interface ParentsListProps {
@@ -54,7 +54,8 @@ const ParentsList: React.FC<ParentsListProps> = ({ ipaid, assetsCount }) => {
     }
 
     return (
-        <div>
+        <div className="pb-6 pt-6">
+            <h2 className="text-xl font-bold mb-2">Parents</h2>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-2">
                 {parentsAssets.map((asset, index) => (
                     <IPAssetCard

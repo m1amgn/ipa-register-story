@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
-import IPAssetCard from "@/components/AssetCard";
-import { getDataForDerivativesList } from "@/utils/get-data/getDataForDerivativesList";
+import IPAssetCard from "@/components/asset-details/AssetCard";
+import { getDataForDerivativesList } from "@/utils/get-data/derivatives/getDataForDerivativesList";
 
 
 interface DerivativesListProps {
@@ -54,7 +54,8 @@ const DerivativesList: React.FC<DerivativesListProps> = ({ ipaid, assetsCount })
     }
 
     return (
-        <div>
+        <div className="pb-6 pt-6">
+            <h2 className="text-xl font-bold mb-2">Derivatives</h2>
             <div className="grid grid-cols-2 gap-2">
                 {derivativesAssets.map((asset, index) => (
                     <IPAssetCard

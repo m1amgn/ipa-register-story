@@ -1,4 +1,4 @@
-import { getIPAMetadata } from "@/utils/get-data/getIPAMetadata";
+import { getIPAMetadata } from "@/utils/get-data/assets/getIPAMetadata";
 
 interface nameAndImageIPA {
     name: string;

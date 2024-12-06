@@ -23,7 +23,7 @@ const IPAssetCard: React.FC<IPAssetsCardProps> = ({ IPAssetDetails, index, isNee
         <a
             href={`/ipa/${IPAssetDetails.id}`}
             rel="noopener noreferrer"
-            className="block bg-white rounded p-2 cursor-pointer hover:bg-gray-300"
+            className="block rounded p-2 cursor-pointer hover:bg-gray-200"
         >
             <div className="relative w-full h-48">
                 <Image

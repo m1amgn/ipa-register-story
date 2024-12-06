@@ -1,5 +1,5 @@
 import { IPAssetRegistryContractABI, IPAssetRegistryContractAddress } from "@/utils/contracts/IPAssetRegistry";
-import { readContracts } from "./readContracts";
+import { readContracts } from "@/utils/get-data/readContracts";
 import { Abi } from "viem";
 
 export const getIPAssetId = async (

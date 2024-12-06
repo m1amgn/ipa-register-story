@@ -2,3 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+*,
+*::before,
+*::after {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+div[data-rk] {
+    display: flex;
+    flex-direction: column;
+  }
+  

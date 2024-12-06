@@ -1,5 +1,6 @@
 "use client";
 
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -35,7 +36,13 @@ const Navigation: React.FC = () => {
             StoryApp
           </Link>
         </div>
-        <div className="flex items-center space-x-10">
+        <div className="flex items-center space-x-16">
+          <Link href="/gallery" className="hover:text-gray-300">
+            Gallery
+          </Link>
+          <Link href="/register-ipa" className="hover:text-gray-300">
+            Register IPA
+          </Link>
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={toggleProfileMenu}
@@ -69,12 +76,10 @@ const Navigation: React.FC = () => {
               </div>
             )}
           </div>
-          <Link href="/gallery" className="hover:text-gray-300">
-            Gallery
-          </Link>
-          <Link href="/register-ipa" className="hover:text-gray-300">
-            Register IPA
-          </Link>
+          {/* Добавляем кнопку подключения */}
+          <div>
+            <ConnectButton showBalance={false} accountStatus="address" label="Connect"/>
+          </div>
         </div>
       </div>
     </nav>

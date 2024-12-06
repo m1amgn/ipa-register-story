@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { getIPAMetadata } from "@/utils/get-data/getIPAMetadata";
+import { getIPAMetadata } from "@/utils/get-data/assets/getIPAMetadata";
 
 interface AssetDetailsProps {
   ipaid: `0x${string}`;
@@ -90,7 +90,7 @@ const AssetDetails: React.FC<AssetDetailsProps> = ({ ipaid }) => {
   }, [ipaid]);
 
   if (isLoading) {
-    return <div className="text-center p-8">Loading asset details...</div>;
+    return <div className="text-center p-8">Loading...</div>;
   }
 
   if (error || !nftTokenData || !IPAMetadata) {
@@ -102,7 +102,7 @@ const AssetDetails: React.FC<AssetDetailsProps> = ({ ipaid }) => {
   }
 
   return (
-    <div className="bg-white shadow rounded">
+    <div className="shadow rounded pt-8 pb-8">
       <div className="mb-6 flex flex-col md:flex-row gap-8">
         <div className="relative w-full md:w-1/2 h-48 md:h-64 lg:h-80">
           <Image
