@@ -114,15 +114,25 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag, 
       ) : (
         <>
           {!isDerivativeFlag && (
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowCommercialOnly(!showCommercialOnly)}
-                className="py-2 px-4 rounded-md font-semibold text-sm transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
-              >
-                {showCommercialOnly ? "Show all" : "Show only commercial"}
-              </button>
+            <div className="flex justify-end m-4">
+              <label className="inline-flex items-center cursor-pointer w-fit p-2 rounded">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={showCommercialOnly}
+                    onChange={() => setShowCommercialOnly(!showCommercialOnly)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer-checked:bg-indigo-600 peer transition-colors duration-300"></div>
+                  <div className="absolute top-[2px] left-[2px] bg-white w-5 h-5 rounded-full border border-gray-300 transition-all duration-300 transform peer-checked:translate-x-full"></div>
+                </div>
+                <span className="ml-3 text-sm font-medium text-gray-700 select-none">
+                  Show only commercial
+                </span>
+              </label>
             </div>
           )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {filteredAssets.map((asset, index) => (
               <IPAssetCard

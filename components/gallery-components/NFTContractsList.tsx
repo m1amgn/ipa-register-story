@@ -24,7 +24,6 @@ export default function NFTContractsList() {
         console.error("Error fetching recent NFT contracts:", error);
       }
     }
-
     fetchContracts();
   }, []);
 
@@ -40,29 +39,27 @@ export default function NFTContractsList() {
 
         <div className="mt-2">
           <h2 className="text-center text-lg mb-10">Owner Address {selectedAddress}</h2>
-          <div className="flex space-x-4 justify-center mb-8">
+          <div className="flex space-x-4 justify-center mb-4">
             <button
               onClick={() => setViewType("parents")}
-              className={`py-2 px-4 rounded-md font-semibold text-sm transition-colors ${
-                viewType === "parents"
-                  ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-              }`}
+              className={`py-2 px-4 rounded-md font-semibold text-sm transition-colors ${viewType === "parents"
+                ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
             >
               Parents IP Assets
             </button>
             <button
               onClick={() => setViewType("derivatives")}
-              className={`py-2 px-4 rounded-md font-semibold text-sm transition-colors ${
-                viewType === "derivatives"
-                  ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-              }`}
+              className={`py-2 px-4 rounded-md font-semibold text-sm transition-colors ${viewType === "derivatives"
+                ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
             >
               Derivatives IP Assets
             </button>
           </div>
-          <div className="mt-4 mb-4">
+          <div className="mb-4">
             {viewType === "parents" ? (
               <IPAssetsList
                 address={selectedAddress}
@@ -84,11 +81,11 @@ export default function NFTContractsList() {
 
   const filteredContracts = recentContracts
     ? recentContracts.filter(({ address, contract }) => {
-        const q = searchQuery.toLowerCase();
-        return (
-          address.toLowerCase().includes(q) || contract.toLowerCase().includes(q)
-        );
-      })
+      const q = searchQuery.toLowerCase();
+      return (
+        address.toLowerCase().includes(q) || contract.toLowerCase().includes(q)
+      );
+    })
     : [];
 
   return (
@@ -101,22 +98,34 @@ export default function NFTContractsList() {
               placeholder="Search by address or contract..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border border-solid border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full border border-solid border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500 text-sm"
             />
           </div>
 
-          <table className="min-w-full divide-y divide-gray-200 border mt-4">
+          <table className="min-w-full divide-y divide-gray-200 border mt-4 table-fixed">
             <thead className="bg-gray-100">
               <tr>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-normal break-words"
+                >
+                  NAME
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-normal break-words"
+                >
+                  DESCRIPTION
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-normal break-words"
                 >
                   OWNER ADDRESS
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-normal break-words"
                 >
                   CONTRACT
                 </th>
@@ -133,12 +142,19 @@ export default function NFTContractsList() {
                       setViewType("parents");
                     }}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                    <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-normal break-words">
+                      Contract Name
+                    </td>
+                    <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-normal break-words">
+                      Description of Conract Name
+                    </td>
+                    <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-normal break-all w-80">
                       {address}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                    <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-normal break-all w-80">
                       {contract}
                     </td>
+
                   </tr>
                 ))
               ) : (

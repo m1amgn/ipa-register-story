@@ -13,7 +13,6 @@ import { getNftContractByAddress } from "@/utils/api-utils/getNftContractByAddre
 import { updateNftContract } from "@/utils/api-utils/updateNftContract";
 
 
-
 const RegisterIpaPage: React.FC = () => {
   const { address, isConnected } = useAccount();
   const { data: wallet } = useWalletClient();
@@ -323,7 +322,6 @@ const RegisterIpaPage: React.FC = () => {
         });
 
       } else {
-
         response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
           spgNftContract: nftContract as `0x${string}`,
           pilType: PIL_TYPE.NON_COMMERCIAL_REMIX,

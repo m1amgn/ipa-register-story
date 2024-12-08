@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import LicenseDetails from '@/components/asset-details/LicenseDetails';
 import AddCommercialLicenseButton from '@/components/buttons/AddCommercialLicenseButton';
@@ -78,7 +78,7 @@ const AssetDetailsPage: React.FC = () => {
   return (
     <div className="flex flex-col flex-grow h-full">
       {!isConnected && (
-        <div className="flex text-red-800 text-sm font-bold justify-end mb-6 mt-6 mr-6">
+        <div className="flex text-red-800 text-sm font-bold justify-end mt-6 mr-6">
           <p>Connect wallet to manage IP Asset</p>
         </div>
       )}
@@ -104,6 +104,11 @@ const AssetDetailsPage: React.FC = () => {
             </div>
           </div>
         )}
+        {parentIpCount === 0 && isConnected && address && isOwner && (
+          <div className="text-center rounded mt-10 mb-4">
+            <AddCommercialLicenseButton ipaid={ipaid} />
+          </div>
+        )}
         {isConnected ? (
           <div className='flex flex-col flex-grow h-full'>
             <LicenseDetails
@@ -123,15 +128,11 @@ const AssetDetailsPage: React.FC = () => {
             />
           </div>
         )}
-        {parentIpCount === 0 && isConnected && address && isOwner && (
-          <div className="text-left rounded mb-4">
-            <AddCommercialLicenseButton ipaid={ipaid} />
-          </div>
-        )}
+
       </div>
     </div>
   );
-  
+
 
 
 };

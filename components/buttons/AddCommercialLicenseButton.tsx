@@ -13,7 +13,7 @@ const AddCommercialLicenseButton: React.FC<AddCommercialLicenseButtonProps> = ({
 
   return (
     <button
-      className="bg-indigo-600 text-white font-semibold mt-4 px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
+      className="bg-indigo-600 text-white font-semibold mt-8 px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
       onClick={() => router.push(`/ipa/${ipaid}/add-commercial-license/`)}
     >
       Add Commercial License

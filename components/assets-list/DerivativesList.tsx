@@ -55,7 +55,7 @@ const DerivativesList: React.FC<DerivativesListProps> = ({ ipaid, assetsCount })
 
     return (
         <div className="pb-6 pt-6">
-            <h2 className="text-xl font-bold mb-2">Derivatives</h2>
+            <h2 className="text-xl text-center font-bold mb-2">Derivatives</h2>
             <div className="grid grid-cols-2 gap-2">
                 {derivativesAssets.map((asset, index) => (
                     <IPAssetCard

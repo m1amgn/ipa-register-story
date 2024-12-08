@@ -15,8 +15,8 @@ export default function IPAAssetsPage() {
   const [activeTab, setActiveTab] = useState(TABS.IPAS);
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
-      <div className="w-1/6 bg-gray-100 p-4 border-r border-solid border-gray-300">
+    <div className="flex bg-gray-100">
+      <div className="w-1/8 bg-gray-100 p-4">
         <ul className="space-y-2">
           <li>
             <button
@@ -25,7 +25,7 @@ export default function IPAAssetsPage() {
                 activeTab === TABS.IPAS ? 'bg-gray-600 text-white' : 'bg-gray-100'
               }`}
             >
-              Recent IP Assets
+              New IP Assets
             </button>
           </li>
           <li>
@@ -35,7 +35,7 @@ export default function IPAAssetsPage() {
                 activeTab === TABS.DERIVATIVES ? 'bg-gray-600 text-white' : 'bg-gray-100'
               }`}
             >
-              Recent Derivatives
+              New Derivatives
             </button>
           </li>
           <li>
@@ -45,13 +45,13 @@ export default function IPAAssetsPage() {
                 activeTab === TABS.CONTRACTS ? 'bg-gray-600 text-white' : 'bg-gray-100'
               }`}
             >
-              Recent NFT Contracts
+              NFT Contracts
             </button>
           </li>
         </ul>
       </div>
 
-      <div className="w-3/4 p-4 ml-4">
+      <div className="w-5/6 p-4 ml-2">
         {activeTab === TABS.IPAS && <IPAsList />}
         {activeTab === TABS.DERIVATIVES && <DerivativesList />}
         {activeTab === TABS.CONTRACTS && <NFTContractsList />}

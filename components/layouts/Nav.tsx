@@ -30,18 +30,18 @@ const Navigation: React.FC = () => {
 
   return (
     <nav className="bg-gray-600 text-white font-medium py-4 px-2">
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="mx-auto flex items-center justify-between px-10">
         <div className="text-lg font-bold">
           <Link href="/" className="hover:text-gray-300">
             StoryApp
           </Link>
         </div>
-        <div className="flex items-center space-x-16">
-          <Link href="/gallery" className="hover:text-gray-300">
-            Gallery
-          </Link>
+        <div className="flex items-center space-x-10">
           <Link href="/register-ipa" className="hover:text-gray-300">
             Register IPA
+          </Link>
+          <Link href="/gallery" className="hover:text-gray-300">
+            Gallery
           </Link>
           <div className="relative" ref={profileMenuRef}>
             <button
@@ -51,7 +51,7 @@ const Navigation: React.FC = () => {
               Profile
             </button>
             {isProfileMenuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-lg">
+              <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-lg z-50">
                 <Link
                   href="/profile/my-ipa"
                   onClick={() => setIsProfileMenuOpen(false)}
@@ -73,12 +73,18 @@ const Navigation: React.FC = () => {
                 >
                   My License Tokens
                 </Link>
+                <Link
+                  href="/profile/my-royalty-revenue"
+                  onClick={() => setIsProfileMenuOpen(false)}
+                  className="block px-4 py-2 text-sm hover:bg-gray-500 hover:text-white"
+                >
+                  My Royalty Revenue
+                </Link>
               </div>
             )}
           </div>
-          {/* Добавляем кнопку подключения */}
           <div>
-            <ConnectButton showBalance={false} accountStatus="address" label="Connect"/>
+            <ConnectButton showBalance={false} accountStatus="address" label="Connect" />
           </div>
         </div>
       </div>

@@ -55,7 +55,7 @@ const ParentsList: React.FC<ParentsListProps> = ({ ipaid, assetsCount }) => {
 
     return (
         <div className="pb-6 pt-6">
-            <h2 className="text-xl font-bold mb-2">Parents</h2>
+            <h2 className="text-xl text-center font-bold mb-2">Parents</h2>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-2">
                 {parentsAssets.map((asset, index) => (
                     <IPAssetCard

@@ -129,7 +129,7 @@ const AssetDetails: React.FC<AssetDetailsProps> = ({ ipaid }) => {
                 rel="noopener noreferrer"
                 className="hover:text-gray-400 hover:underline"
               >
-                <strong>IPA in Story Protocol Explorer</strong>
+                <strong>IPA on Story Protocol Explorer</strong>
               </a>
             </p>
             <p className="mb-2">

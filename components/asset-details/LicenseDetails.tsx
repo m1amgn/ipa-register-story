@@ -97,7 +97,7 @@ const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isO
   }
 
   return (
-    <div className="flex flex-col flex-grow h-full mt-10 mb-10 space-y-4">
+    <div className="flex flex-col flex-grow h-full mb-10 space-y-4">
       {licenses.map((license) => (
         <div key={license.id} className="p-4 rounded shadow-sm">
           <div className="flex justify-between items-center mb-2">
