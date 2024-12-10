@@ -189,7 +189,6 @@ const MyLicenseTokensPage = () => {
                     ))}
                 </div>
             )}
-
             {selectedToken && (
                 <div
                     className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center"
@@ -216,7 +215,6 @@ const MyLicenseTokensPage = () => {
                     </div>
                 </div>
             )}
-
             {error && <p className="text-gray-500 text-center mt-4">{error}</p>}
         </div>
     );

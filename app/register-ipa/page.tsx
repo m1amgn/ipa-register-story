@@ -11,6 +11,7 @@ import { uploadJSONToIPFS } from "@/utils/api-utils/uploadJSONToIPFS";
 import { currencyTokensAddress } from "@/utils/resources/currencyTokenAddress";
 import { getNftContractByAddress } from "@/utils/api-utils/getNftContractByAddress";
 import { updateNftContract } from "@/utils/api-utils/updateNftContract";
+import { updateLastIPAsList } from "@/utils/api-utils/updateLastIPAsList";
 
 
 const RegisterIpaPage: React.FC = () => {
@@ -337,8 +338,13 @@ const RegisterIpaPage: React.FC = () => {
 
       console.log("Response:", response);
 
+      if (response.ipId) {
+        await updateLastIPAsList(response.ipId);
+      } else {
+        console.error(`No ipId address`)
+      }
+
       alert(`IPA: https://odyssey.explorer.story.foundation/ipa/${response.ipId}`);
-      router.push(`/profile/my-ipa`);
 
     } catch (error: any) {
       console.error("Error in registration IPA:", error);

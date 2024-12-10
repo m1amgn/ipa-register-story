@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { getNftContractByAddress } from "@/utils/api-utils/getNftContractByAddress";
 import { getMyTokensAmount } from "@/utils/get-data/assets/getMyTokensAmount";
-import { useAccount } from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
 import { getNameAndImageIPA } from "@/utils/get-data/assets/getNameAndImageIPA";
 import { getIPAssetId } from "@/utils/get-data/assets/getIPAssetId";
 import { readContracts } from "@/utils/get-data/readContracts";
@@ -11,6 +11,7 @@ import { Abi } from "viem";
 import { royaltyModuleContractABI, royaltyModuleContractAddress } from "@/utils/contracts/royaltyModuleContract";
 import Image from "next/image";
 import AssetDetails from "@/components/asset-details/AssetDetails";
+import { setupStoryClient } from "@/utils/resources/storyClient";
 
 interface IPAsset {
   id: `0x${string}`;
@@ -19,19 +20,18 @@ interface IPAsset {
   revenue?: bigint;
 }
 
-const IPAssetsList: React.FC = () => {
+const IPAssetsRoyaltyList: React.FC = () => {
   const [ipAssets, setIpAssets] = useState<IPAsset[]>([]);
   const [tokensAmount, setTokensAmount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAllAssetsChecked, setIsAllAssetsChecked] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
-
   const [assetData, setAssetData] = useState<any | null>(null);
   const [selectedToken, setSelectedToken] = useState<IPAsset | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Новое состояние для отображения только тех ассетов, у которых есть ревенью
   const [showOnlyClaimable, setShowOnlyClaimable] = useState<boolean>(false);
+  const { data: wallet } = useWalletClient();
+
 
   useEffect(() => {
     if (isConnected && address) {
@@ -54,6 +54,19 @@ const IPAssetsList: React.FC = () => {
       "totalRevenueTokensReceived",
       [ipId, "0xC0F6E387aC0B324Ec18EAcf22EE7271207dCE3d5"]
     )) as bigint;
+  };
+
+  const getIpRoyaltyVault = async (
+    royaltyModuleAddress: `0x${string}`,
+    royaltyModuleAbi: Abi,
+    ipId: `0x${string}`
+  ): Promise<`0x${string}`> => {
+    return (await readContracts(
+      royaltyModuleAddress,
+      royaltyModuleAbi,
+      "ipRoyaltyVaults",
+      [ipId]
+    )) as `0x${string}`;
   };
 
   async function getIPAseetsList(walletAddress: `0x${string}`) {
@@ -145,14 +158,66 @@ const IPAssetsList: React.FC = () => {
       setSelectedToken(asset);
       setAssetData(null);
       setError(null);
-      // Тут можно выполнить дополнительную логику загрузки данных об ассете, если необходимо.
-      // Сейчас просто передадим asset:
       setAssetData(asset);
     } catch (err) {
       console.error("Error fetching token asset data:", err);
       setError("Failed to load asset details.");
     }
   };
+
+  const handleClaimRoyaltyRevenue = async (ipId: `0x${string}`) => {
+    if (!isConnected || !address) {
+      setError("Please connect your wallet.");
+      alert(`Error: ${error}`)
+      return;
+    }
+
+    if (!wallet) {
+      setError("Error: wallet not found. Please try again.");
+      alert(`Error: ${error}`)
+      return;
+    }
+
+    const client = setupStoryClient(wallet);
+    if (!client) {
+      setError("Error initializing StoryClient.");
+      alert(`Error: ${error}`)
+      return;
+    }
+    try {
+      const royaltyVaultIpId = await getIpRoyaltyVault(royaltyModuleContractAddress, royaltyModuleContractABI, ipId);
+
+      const snapshotResponse = await client.royalty.snapshotAndClaimByTokenBatch({
+        royaltyVaultIpId: royaltyVaultIpId as `0x${string}`,
+        currencyTokens: ["0xC0F6E387aC0B324Ec18EAcf22EE7271207dCE3d5"],
+        txOptions: { waitForTransaction: true }
+      });
+      alert(`Snapshot made with ID ${snapshotResponse.snapshotId}, hash: ${snapshotResponse.txHash}`);
+
+      
+
+      // const snapshotResponse = await client.royalty.snapshot({
+      //   royaltyVaultIpId: royaltyVaultIpId as `0x${string}`,
+      //   txOptions: { waitForTransaction: true }
+      // });
+      // alert(`Snapshot made with ID ${snapshotResponse.snapshotId}, hash: ${snapshotResponse.txHash}`);
+
+      // if (snapshotResponse.snapshotId) {
+      //   const claimResponse = await client.royalty.claimRevenue({
+      //     snapshotIds: [snapshotResponse.snapshotId],
+      //     royaltyVaultIpId: royaltyVaultIpId as `0x${string}`,
+      //     token: "0xC0F6E387aC0B324Ec18EAcf22EE7271207dCE3d5",
+      //     txOptions: { waitForTransaction: true }
+      //   });
+      //   alert(`Received ${claimResponse.claimableToken} tokens, hash: ${claimResponse.txHash}`);
+      // } else {
+      //   alert(`Can not get snapshot id`)
+      // }
+    } catch (err) {
+      console.error("Error:", err);
+      setError("Failed to load asset details.");
+    }
+  }
 
   if (!isConnected || !address) {
     return (
@@ -219,11 +284,13 @@ const IPAssetsList: React.FC = () => {
                       className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                       onClick={(e) => {
                         e.stopPropagation();
+                        handleClaimRoyaltyRevenue(asset.id);
                       }}
                     >
                       Claim revenue
                     </button>
                   )}
+
                 </div>
               </div>
             ))}
@@ -265,4 +332,4 @@ const IPAssetsList: React.FC = () => {
   );
 };
 
-export default IPAssetsList;
+export default IPAssetsRoyaltyList;

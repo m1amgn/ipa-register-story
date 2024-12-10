@@ -3,7 +3,7 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useAccount, useWalletClient } from "wagmi";
 import { createHash } from "crypto";
-import { IpMetadata} from "@story-protocol/core-sdk";
+import { IpMetadata } from "@story-protocol/core-sdk";
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { setupStoryClient } from "@/utils/resources/storyClient";
 import { uploadFileToIPFS } from "@/utils/api-utils/uploadFileToIPFS";
@@ -13,6 +13,7 @@ import { updateNftContract } from "@/utils/api-utils/updateNftContract";
 import { feeApproveTransaction } from "@/utils/approve-transactions/feeApproveTransaction";
 import { derivativeWorkflowsContractAddress } from "@/utils/contracts/derivativeWorkflowsContracts";
 import BackToIPAButton from "@/components/buttons/BackToIPAButton";
+import { updateLastDerivativesList } from "@/utils/api-utils/updateLastDerivativesList";
 
 
 const RegisterDerivative: React.FC = () => {
@@ -24,7 +25,7 @@ const RegisterDerivative: React.FC = () => {
     const feeCurrency = searchParams.get('currency') as `0x${string}` ?? '';
     const params = useParams();
     const { ipaid, licenseTermsId } = params as { ipaid: `0x${string}`, licenseTermsId: `0x${string}` };
-    
+
     const [formData, setFormData] = useState<{
         title: string;
         description: string;
@@ -222,7 +223,7 @@ const RegisterDerivative: React.FC = () => {
                 derivData: {
                     parentIpIds: [ipaid],
                     licenseTermsIds: [licenseTermsId]
-                  },
+                },
                 ipMetadata: {
                     ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
                     ipMetadataHash: ipHash as `0x${string}`,
@@ -234,8 +235,13 @@ const RegisterDerivative: React.FC = () => {
 
             console.log("Response:", response);
 
+            if (response.childIpId) {
+                await updateLastDerivativesList(response.childIpId);
+            } else {
+                console.error(`No ipId address`)
+            }
+
             alert(`Completed at transaction hash ${response.txHash}, childIpId ${response.childIpId}, Token ID: ${response.tokenId}`);
-            router.push(`/profile/my-derivatives`);
 
         } catch (error: any) {
             console.error("Error in registration IPA:", error);

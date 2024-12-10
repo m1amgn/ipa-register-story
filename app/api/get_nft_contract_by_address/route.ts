@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
   try {
     const checksummedAddress = getAddress(address);
 
-    const filePath = path.join(process.cwd(), 'spg_nft_owners.json');
+    const filePath = path.join(process.cwd(), 'db/spg_nft_owners.json');
+    
     let owners: Owners = {};
 
     if (fs.existsSync(filePath)) {
@@ -40,7 +41,9 @@ export async function POST(request: NextRequest) {
   if (apiKey !== API_KEY) {
     return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
   }
+
   let body;
+  
   try {
     body = await request.json();
   } catch (error) {
@@ -56,7 +59,7 @@ export async function POST(request: NextRequest) {
   try {
     const checksummedAddress = getAddress(address);
 
-    const filePath = path.join(process.cwd(), 'spg_nft_owners.json');
+    const filePath = path.join(process.cwd(), 'db/spg_nft_owners.json');
     let owners: Owners = {};
 
     if (fs.existsSync(filePath)) {

@@ -95,10 +95,10 @@ export default function NFTContractsList() {
           <div className="mt-4 mb-4 max-w-sm">
             <input
               type="text"
-              placeholder="Search by address or contract..."
+              placeholder="Search by owner or contract address (0x...)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border border-solid border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500 text-sm"
+              className="w-full border border-solid border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-indigo-500 text-sm"
             />
           </div>
 

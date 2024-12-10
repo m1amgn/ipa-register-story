@@ -6,7 +6,8 @@ type Owners = { [key: string]: string };
 
 export async function GET(request: NextRequest) {
   try {
-    const filePath = path.join(process.cwd(), 'spg_nft_owners.json');
+    const filePath = path.join(process.cwd(), 'db/spg_nft_owners.json');
+    
     let owners: Owners = {};
 
     if (fs.existsSync(filePath)) {

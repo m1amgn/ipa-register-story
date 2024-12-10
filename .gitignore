@@ -39,3 +39,4 @@ next-env.d.ts
 spg_nft_owners.json
 last_derivatives.json
 last_ipas.json
+/db
