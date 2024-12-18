@@ -11,9 +11,12 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        hoverBackground: "var(--hover-background)",
+        hoverForeground: "var(--hover-foreground)",
       },
     },
   },
   plugins: [],
 };
+
 export default config;

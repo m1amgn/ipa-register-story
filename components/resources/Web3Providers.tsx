@@ -23,7 +23,7 @@ export default function Web3Providers({ children }: PropsWithChildren) {
         <RainbowKitProvider locale="en-US"
           theme={darkTheme({
             accentColor: 'white',
-            accentColorForeground: 'green',
+            accentColorForeground: 'blue',
             borderRadius: 'medium',
             fontStack: 'rounded',
             overlayBlur: 'small',

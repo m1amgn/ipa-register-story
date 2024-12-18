@@ -20,3 +20,21 @@ div[data-rk] {
     flex-direction: column;
   }
   
+
+  /* :root {
+    --background: #ffffff;
+    --foreground: #000000;
+    --hover-background: #e0e0e0;
+    --hover-foreground: #222222;
+  }
+  
+  [data-theme="dark"] {
+    --background: #1f1d1d;
+    --foreground: #ffffff;
+    --hover-background: #333333;
+    --hover-foreground: #dddddd;
+  }
+  
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+  } */

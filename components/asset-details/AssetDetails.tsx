@@ -113,7 +113,7 @@ const AssetDetails: React.FC<AssetDetailsProps> = ({ ipaid }) => {
             }
             alt={nftTokenData.name}
             fill
-            className="object-contain object-left rounded mb-4"
+            className="object-contain object-center rounded mb-4"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>

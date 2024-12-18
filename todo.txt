@@ -12,3 +12,4 @@
 
 - Think about personal license: only owner can mint license tokens and send someone, but anyone can't make derivative directly.
 
+- Use fetchData.

@@ -16,7 +16,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <body>
           <Web3Providers>
             <Nav />
-            <main className="grow bg-gray-100 font-semibold text-sm">{children}</main>
+            <main className="grow font-semibold text-sm">{children}</main>
             <Footer />
           </Web3Providers>
       </body>

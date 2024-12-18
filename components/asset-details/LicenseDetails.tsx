@@ -89,7 +89,7 @@ const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isO
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-gray-500">{error}</div>;
   }
 
   if (licenses.length === 0) {
@@ -97,7 +97,7 @@ const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isO
   }
 
   return (
-    <div className="flex flex-col flex-grow h-full mb-10 space-y-4">
+    <div className="flex flex-col flex-grow h-full mb-10 space-y-4 mr-10 ml-10">
       {licenses.map((license) => (
         <div key={license.id} className="p-4 rounded shadow-sm">
           <div className="flex justify-between items-center mb-2">
@@ -143,9 +143,9 @@ const LicenseDetails: React.FC<LicenseDetailsProps> = ({ ipaid, isConnected, isO
           {expandedLicenseIds.includes(license.id) && (
             <div className="space-y-2 mt-4">
               {license.licenseTerms.map((term, termIndex) => (
-                <div key={termIndex} className="flex justify-between items-center border-b pb-2 mb-2">
+                <div key={termIndex} className="flex justify-between items-center pb-2 mb-2">
                   <Tooltip text={tooltips[term.trait_type] || ''}>
-                    <span className="font-medium text-gray-700">
+                    <span className="font-medium text-gray-700 border-b border-dotted">
                       {term.trait_type}:
                     </span>
                   </Tooltip>

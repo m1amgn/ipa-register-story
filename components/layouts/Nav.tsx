@@ -2,31 +2,24 @@
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import ThemeSwitcher from "@/components/resources/ThemeSwitcher";
 
 const Navigation: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  let timer: NodeJS.Timeout;
 
-  const toggleProfileMenu = () => {
-    setIsProfileMenuOpen(!isProfileMenuOpen);
+  const handleMouseEnter = () => {
+    clearTimeout(timer);
+    setIsProfileMenuOpen(true);
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      profileMenuRef.current &&
-      !profileMenuRef.current.contains(event.target as Node)
-    ) {
+  const handleMouseLeave = () => {
+    timer = setTimeout(() => {
       setIsProfileMenuOpen(false);
-    }
+    }, 600);
   };
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
 
   return (
     <nav className="bg-gray-600 text-white font-medium py-4 px-2">
@@ -37,19 +30,21 @@ const Navigation: React.FC = () => {
           </Link>
         </div>
         <div className="flex items-center space-x-10">
-          <Link href="/register-ipa" className="hover:text-gray-300">
-            Register IPA
-          </Link>
           <Link href="/gallery" className="hover:text-gray-300">
             Gallery
           </Link>
-          <div className="relative" ref={profileMenuRef}>
-            <button
-              onClick={toggleProfileMenu}
-              className="hover:text-gray-300 focus:outline-none"
-            >
+          <Link href="/register-ipa" className="hover:text-gray-300">
+            Register IPA
+          </Link>
+          <div
+            className="relative"
+            ref={profileMenuRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <Link href="/profile" className="hover:text-gray-300">
               Profile
-            </button>
+            </Link>
             {isProfileMenuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-lg z-50">
                 <Link
@@ -83,6 +78,7 @@ const Navigation: React.FC = () => {
               </div>
             )}
           </div>
+          <ThemeSwitcher />
           <div>
             <ConnectButton showBalance={false} accountStatus="address" label="Connect" />
           </div>

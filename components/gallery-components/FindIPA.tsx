@@ -46,7 +46,7 @@ const FindIPA = () => {
             </div>
             <button
                 onClick={handleSearch}
-                className="px-6 py-2 bg-indigo-500 text-white rounded text-sm hover:bg-ingigo-600 transition"
+                className="px-6 py-2 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600 transition"
             >
                 Search
             </button>

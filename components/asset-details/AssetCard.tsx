@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 
@@ -17,8 +16,6 @@ interface IPAssetsCardProps {
 }
 
 const IPAssetCard: React.FC<IPAssetsCardProps> = ({ IPAssetDetails, index, isNeedShowCommercial }) => {
-    const router = useRouter();
-
     return (
         <a
             href={`/ipa/${IPAssetDetails.id}`}
