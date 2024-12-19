@@ -18,6 +18,7 @@ interface IPAssetsCardProps {
 const IPAssetCard: React.FC<IPAssetsCardProps> = ({ IPAssetDetails, index, isNeedShowCommercial }) => {
     return (
         <a
+            target="_blank"
             href={`/ipa/${IPAssetDetails.id}`}
             rel="noopener noreferrer"
             className="block rounded p-2 cursor-pointer hover:bg-gray-200"

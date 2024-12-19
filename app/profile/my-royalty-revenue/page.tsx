@@ -6,18 +6,33 @@ import { getMyTokensAmount } from "@/utils/get-data/assets/getMyTokensAmount";
 import { useAccount, useWalletClient } from "wagmi";
 import { getNameAndImageIPA } from "@/utils/get-data/assets/getNameAndImageIPA";
 import { getIPAssetId } from "@/utils/get-data/assets/getIPAssetId";
-import { readContracts } from "@/utils/get-data/readContracts";
-import { Abi } from "viem";
 import { royaltyModuleContractABI, royaltyModuleContractAddress } from "@/utils/contracts/royaltyModuleContract";
-import Image from "next/image";
-import AssetDetails from "@/components/asset-details/AssetDetails";
 import { setupStoryClient } from "@/utils/resources/storyClient";
+import { vaultContractABI } from "@/utils/contracts/vaultContract";
+import { getLogsFromMintAndRegisterIpAndMakeDerivativeEvent } from "@/utils/get-data/royalty/getLogsFromMintAndRegisterIpAndMakeDerivativeEvent";
+import { getIpRoyaltyVault } from "@/utils/get-data/royalty/getIpRoyaltyVault";
+import { getRevenuesAddedToVaultLogs } from "@/utils/get-data/royalty/getRevenuesAddedToVaultLogs";
+import { currencyTokensAddress } from "@/utils/resources/currencyTokenAddress";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+import { encodeFunctionData } from "viem";
+import { SUSDContractABI, SUSDContractAddress } from "@/utils/contracts/SUSDContract";
+
+const AssetDetails = dynamic(() => import('@/components/asset-details/AssetDetails'), {
+  ssr: false,
+});
+
+interface RevenueItem {
+  childIpId: `0x${string}`;
+  amount: bigint;
+  token: `0x${string}`;
+}
 
 interface IPAsset {
   id: `0x${string}`;
   name: string;
   imageUrl: string;
-  revenue?: bigint;
+  revenue?: RevenueItem[];
 }
 
 const IPAssetsRoyaltyList: React.FC = () => {
@@ -26,12 +41,10 @@ const IPAssetsRoyaltyList: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAllAssetsChecked, setIsAllAssetsChecked] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
-  const [assetData, setAssetData] = useState<any | null>(null);
-  const [selectedToken, setSelectedToken] = useState<IPAsset | null>(null);
+  const [assetData, setAssetData] = useState<`0x${string}` | null>(null);
+  const [selectedToken, setSelectedToken] = useState<`0x${string}` | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [showOnlyClaimable, setShowOnlyClaimable] = useState<boolean>(false);
   const { data: wallet } = useWalletClient();
-
 
   useEffect(() => {
     if (isConnected && address) {
@@ -42,32 +55,6 @@ const IPAssetsRoyaltyList: React.FC = () => {
       getIPAseetsList(address);
     }
   }, [isConnected, address]);
-
-  const getTotalRevenueTokensReceived = async (
-    royaltyModuleAddress: `0x${string}`,
-    royaltyModuleAbi: Abi,
-    ipId: `0x${string}`
-  ): Promise<bigint> => {
-    return (await readContracts(
-      royaltyModuleAddress,
-      royaltyModuleAbi,
-      "totalRevenueTokensReceived",
-      [ipId, "0xC0F6E387aC0B324Ec18EAcf22EE7271207dCE3d5"]
-    )) as bigint;
-  };
-
-  const getIpRoyaltyVault = async (
-    royaltyModuleAddress: `0x${string}`,
-    royaltyModuleAbi: Abi,
-    ipId: `0x${string}`
-  ): Promise<`0x${string}`> => {
-    return (await readContracts(
-      royaltyModuleAddress,
-      royaltyModuleAbi,
-      "ipRoyaltyVaults",
-      [ipId]
-    )) as `0x${string}`;
-  };
 
   async function getIPAseetsList(walletAddress: `0x${string}`) {
     try {
@@ -104,7 +91,10 @@ const IPAssetsRoyaltyList: React.FC = () => {
       for (let i = 0; i < assetPromises.length; i += maxConcurrent) {
         const batch = assetPromises.slice(i, i + maxConcurrent);
         const batchResults = await Promise.all(batch);
-        const newAssets = batchResults.filter((asset): asset is IPAsset => asset !== null);
+
+        const newAssets = batchResults.filter((asset): asset is IPAsset =>
+          asset !== null && (asset.revenue?.length ?? 0) > 0
+        );
 
         setIpAssets((prevAssets) => {
           const allAssets = [...prevAssets, ...newAssets];
@@ -125,9 +115,37 @@ const IPAssetsRoyaltyList: React.FC = () => {
     }
   }
 
+  async function getRevenue(ipId: `0x${string}`) {
+    const royaltyVaultIpIdAddress = await getIpRoyaltyVault(
+      royaltyModuleContractAddress,
+      royaltyModuleContractABI,
+      ipId
+    );
+
+    const revenues = await getRevenuesAddedToVaultLogs(
+      0 as number,
+      "latest",
+      royaltyVaultIpIdAddress as `0x${string}`,
+      vaultContractABI
+    );
+
+    const revenueData = await Promise.all(
+      revenues.map(async ({ transactionHash, args }) => {
+        const { amount, token } = args as { amount: bigint; token: `0x${string}` };
+        const childIpId = await getLogsFromMintAndRegisterIpAndMakeDerivativeEvent(transactionHash);
+
+        if (childIpId) {
+          return { childIpId, amount, token };
+        }
+        return null;
+      })
+    );
+    return revenueData.filter((rev): rev is RevenueItem => rev !== null);
+  }
+
   async function getIPADataForAssetsList(
     nftContractAddress: string,
-    index: number,
+    index: number
   ): Promise<IPAsset | null> {
     try {
       const id = await getIPAssetId(nftContractAddress, index);
@@ -135,25 +153,25 @@ const IPAssetsRoyaltyList: React.FC = () => {
         getNameAndImageIPA(id as `0x${string}`),
       ]);
 
-      const revenue = await getTotalRevenueTokensReceived(
-        royaltyModuleContractAddress,
-        royaltyModuleContractABI,
-        id as `0x${string}`
-      );
+      const revenues = await getRevenue(id as `0x${string}`);
+
+      if (!revenues || revenues.length === 0) {
+        return null;
+      }
 
       return {
         id,
         name,
         imageUrl,
-        revenue
+        revenue: revenues,
       };
     } catch (error) {
-      console.error(`Error in fetching data for index ${index}:`, error);
+      console.error("Error in fetching data for index " + index + ":", error);
       return null;
     }
   }
 
-  const handleCardClick = async (asset: IPAsset) => {
+  const handleCardClick = async (asset: `0x${string}`) => {
     try {
       setSelectedToken(asset);
       setAssetData(null);
@@ -165,105 +183,99 @@ const IPAssetsRoyaltyList: React.FC = () => {
     }
   };
 
-  const handleClaimRoyaltyRevenue = async (ipId: `0x${string}`) => {
+  const handleClaimRoyaltyRevenue = async (
+    parentIpId: `0x${string}`,
+    childIpId: `0x${string}`,
+    token: `0x${string}`,
+    amount: bigint
+  ) => {
     if (!isConnected || !address) {
       setError("Please connect your wallet.");
-      alert(`Error: ${error}`)
+      alert(`Error: ${error}`);
       return;
     }
 
     if (!wallet) {
       setError("Error: wallet not found. Please try again.");
-      alert(`Error: ${error}`)
+      alert(`Error: ${error}`);
       return;
     }
 
     const client = setupStoryClient(wallet);
     if (!client) {
       setError("Error initializing StoryClient.");
-      alert(`Error: ${error}`)
+      alert(`Error: ${error}`);
       return;
     }
     try {
-      const royaltyVaultIpId = await getIpRoyaltyVault(royaltyModuleContractAddress, royaltyModuleContractABI, ipId);
 
-      const snapshotResponse = await client.royalty.snapshotAndClaimByTokenBatch({
-        royaltyVaultIpId: royaltyVaultIpId as `0x${string}`,
-        currencyTokens: ["0xC0F6E387aC0B324Ec18EAcf22EE7271207dCE3d5"],
-        txOptions: { waitForTransaction: true }
-      });
-      alert(`Snapshot made with ID ${snapshotResponse.snapshotId}, hash: ${snapshotResponse.txHash}`);
-
-      
-
-      // const snapshotResponse = await client.royalty.snapshot({
-      //   royaltyVaultIpId: royaltyVaultIpId as `0x${string}`,
-      //   txOptions: { waitForTransaction: true }
+      // const claimRevenue = await client.royalty.transferToVaultAndSnapshotAndClaimByTokenBatch({
+      //   ancestorIpId: parentIpId,
+      //   claimer: ancestorIpId,
+      //   royaltyClaimDetails: [{
+      //     childIpId: childIpId,
+      //     royaltyPolicy: "0x28b4F70ffE5ba7A26aEF979226f77Eb57fb9Fdb6",
+      //     currencyToken: token,
+      //     amount: 300000000000000000
+      //   }],
+      //   txOptions: { waitForTransaction: true },
       // });
-      // alert(`Snapshot made with ID ${snapshotResponse.snapshotId}, hash: ${snapshotResponse.txHash}`);
+      // console.log(`Claimed ${claimRevenue.amountsClaimed} revenue at snapshotId ${claimRevenue.snapshotId}`)
 
-      // if (snapshotResponse.snapshotId) {
-      //   const claimResponse = await client.royalty.claimRevenue({
-      //     snapshotIds: [snapshotResponse.snapshotId],
-      //     royaltyVaultIpId: royaltyVaultIpId as `0x${string}`,
-      //     token: "0xC0F6E387aC0B324Ec18EAcf22EE7271207dCE3d5",
-      //     txOptions: { waitForTransaction: true }
-      //   });
-      //   alert(`Received ${claimResponse.claimableToken} tokens, hash: ${claimResponse.txHash}`);
-      // } else {
-      //   alert(`Can not get snapshot id`)
-      // }
+      const calldata = encodeFunctionData({
+        abi: SUSDContractABI,
+        functionName: "transfer",
+        args: ["0x4C796dAA70F4572A580C19aed0c13019cD8FcE20" as `0x${string}`, BigInt(300000000000000000)]
+      });
+
+      const transfer = await client?.ipAccount.execute({
+        ipId: parentIpId,
+        to: SUSDContractAddress,
+        value: 0,
+        data: calldata,
+        txOptions: { waitForTransaction: true },
+      })
+
+      console.log(transfer);
+
     } catch (err) {
       console.error("Error:", err);
       setError("Failed to load asset details.");
     }
+  };
+
+  function getTokenNameByAddress(address: `0x${string}`): string {
+    const entry = Object.entries(currencyTokensAddress).find(([, addr]) => addr.toLowerCase() === address.toLowerCase());
+    return entry ? entry[0] : address;
   }
 
   if (!isConnected || !address) {
     return (
-      <div>
-        <p className="text-center">Please connect your wallet to view your IP assets.</p>
+      <div className="p-8 text-center text-gray-700">
+        Please connect your wallet to view revenue streams.
       </div>
     );
   }
 
-  const filteredAssets = showOnlyClaimable
-    ? ipAssets.filter(asset => (asset.revenue ?? BigInt(0)) > BigInt(0))
-    : ipAssets;
-
   return (
-    <div>
+    <div className="p-8">
+      <h1 className="text-lg font-bold text-gray-800 text-center m-8">Minting fees revenue</h1>
       {isLoading && ipAssets.length === 0 ? (
-        <div className="text-center p-8">Loading...</div>
+        <div className="text-center p-8 text-gray-600">Loading your assets...</div>
       ) : isAllAssetsChecked && ipAssets.length === 0 ? (
-        <div className="text-center p-8">No derivatives found</div>
+        <div className="text-center p-8 text-gray-600">No revenue streams found</div>
       ) : tokensAmount === 0 ? (
-        <div className="text-center p-8">No assets found</div>
+        <div className="text-center p-8 text-gray-600">No revenue streams found</div>
       ) : (
-        <>
-          <div className="flex justify-end m-8 ml-16">
-            <label className="inline-flex items-center cursor-pointer w-fit p-2">
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  id="showClaimable"
-                  checked={showOnlyClaimable}
-                  onChange={() => setShowOnlyClaimable(!showOnlyClaimable)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer-checked:bg-indigo-600 peer transition-colors duration-300"></div>
-                <div className="absolute top-[2px] left-[2px] bg-white w-5 h-5 rounded-full border border-gray-300 transition-all duration-300 transform peer-checked:translate-x-full"></div>
-              </div>
-              <span className="ml-3 text-sm font-medium text-gray-700 select-none">Show assets with claimable revenue</span>
-            </label>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-2 m-8 ml-16">
-            {filteredAssets.map((asset) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {ipAssets.map((asset) => (
+            <div
+              key={asset.id}
+              className="border border-gray-200 p-4 rounded-md shadow-sm bg-white hover:shadow-md transition-shadow duration-200"
+            >
               <div
-                key={asset.id}
-                className="border p-4 rounded-md cursor-pointer text-left hover:bg-gray-300 flex items-center"
-                onClick={() => handleCardClick(asset)}
+                className="relative mb-4 w-full h-48 flex justify-left items-center bg-gray-100 rounded"
+                onClick={() => handleCardClick(asset.id)}
               >
                 <Image
                   src={
@@ -272,35 +284,65 @@ const IPAssetsRoyaltyList: React.FC = () => {
                       : asset.imageUrl
                   }
                   alt={asset.name}
-                  width={180}
-                  height={180}
-                  className="object-contain rounded mr-4"
+                  width={200}
+                  height={200}
+                  className="object-contain h-auto w-auto max-h-full max-w-full cursor-pointer"
+                  title="View asset details"
                 />
-                <div>
-                  <h2 className="text-lg font-bold">{asset.name || "Unnamed Asset"}</h2>
-                  <p>Claimable revenue: <span>{asset.revenue?.toString() ?? "0"}</span></p>
-                  {asset.revenue && asset.revenue > BigInt(0) && (
-                    <button
-                      className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleClaimRoyaltyRevenue(asset.id);
-                      }}
-                    >
-                      Claim revenue
-                    </button>
-                  )}
-
-                </div>
               </div>
-            ))}
-          </div>
-        </>
+              <a
+                target="_blank"
+                href={`/ipa/${asset.id}`}
+                rel="noopener noreferrer"
+                className="block rounded cursor-pointer">
+                <h3 className="text-lg font-semibold text-gray-800 truncate cursor-pointer  hover:underline hover:text-gray-600"
+                  title="Go to asset page"
+                >
+                  {asset.name || "Unnamed Asset"}
+                </h3></a>
+
+              {(asset.revenue?.length ?? 0) > 0 ? (
+                <div className="mt-4 text-sm text-gray-700">
+                  <h3 className="font-bold mb-2">Revenue Streams:</h3>
+                  {asset.revenue!.map((rev, idx) => {
+                    const tokenName = getTokenNameByAddress(rev.token);
+                    const amountFormatted = (Number(rev.amount) / 10 ** 18).toFixed(3);
+                    return (
+                      <div key={idx} className="mb-4 border-b border-gray-100 pb-4">
+                        <p
+                          className="underline cursor-pointer text-indigo-600 hover:text-indigo-800"
+                          onClick={() => handleCardClick(rev.childIpId)}
+                          title="View child IP asset details"
+                        >
+                          Child IP Asset
+                        </p>
+                        <p className="text-gray-600 mt-1">
+                          Amount: <span className="font-semibold">{amountFormatted} {tokenName}</span>
+                        </p>
+                        <button
+                          className="mt-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClaimRoyaltyRevenue(asset.id, rev.childIpId, rev.token, rev.amount);
+                          }}
+                        >
+                          Claim Revenue
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-gray-500">No revenue</p>
+              )}
+            </div>
+          ))}
+        </div>
       )}
 
       {selectedToken && assetData && (
         <div
-          className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center"
+          className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setSelectedToken(null);
@@ -322,7 +364,7 @@ const IPAssetsRoyaltyList: React.FC = () => {
               <p className="text-gray-500">{error}</p>
             ) : (
               <>
-                <AssetDetails ipaid={assetData.id} />
+                <AssetDetails ipaid={assetData} />
               </>
             )}
           </div>
