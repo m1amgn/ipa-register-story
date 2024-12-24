@@ -18,7 +18,6 @@ interface Contract {
         return null;
       }
   
-      // Преобразуем ответ API в массив контрактов
       const data: { [key: string]: string } = await response.json();
   
       const contractsArray: RecentContracts = Object.entries(data).map(([address, contract]) => ({
@@ -26,7 +25,7 @@ interface Contract {
         contract: contract as `0x${string}`,
       }));
   
-      return contractsArray.slice(-3); // Последние 3 контракта
+      return contractsArray;
     } catch (error) {
       console.error("Error in getRecentNftContracts:", error);
       return null;

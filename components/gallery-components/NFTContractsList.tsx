@@ -36,7 +36,6 @@ export default function NFTContractsList() {
         >
           Back
         </button>
-
         <div className="mt-2">
           <h2 className="text-center text-lg mb-10">Owner Address {selectedAddress}</h2>
           <div className="flex space-x-4 justify-center mb-4">

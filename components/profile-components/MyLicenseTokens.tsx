@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
 import { readContracts } from "@/utils/get-data/readContracts";
 import { licenseTokenContractAddress, licenseTokenContractABI } from "@/utils/contracts/licenseTokenContract";
 import { getIPAMetadata } from "@/utils/get-data/assets/getIPAMetadata";
@@ -18,6 +17,9 @@ const LicenseDetails = dynamic(() => import('@/components/asset-details/LicenseD
     ssr: false,
 });
 
+interface MyLicenseTokensProps {
+    address: `0x${string}`;
+}
 
 type LicenseTokenMetadata = {
     tokenId: string;
@@ -29,8 +31,7 @@ type LicenseTokenMetadata = {
     imageUrl: string;
 };
 
-const MyLicenseTokensPage = () => {
-    const { address, isConnected } = useAccount();
+export default function MyLicenseTokens({ address }: MyLicenseTokensProps) {
     const [metadataList, setMetadataList] = useState<LicenseTokenMetadata[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedToken, setSelectedToken] = useState<LicenseTokenMetadata | null>(null);
@@ -40,7 +41,7 @@ const MyLicenseTokensPage = () => {
 
 
     const fetchLicenseTokensBalanceOf = async () => {
-        if (!isConnected || !address) return BigInt(0);
+        if (!address) return BigInt(0);
         try {
             return await readContracts(licenseTokenContractAddress, licenseTokenContractABI, "balanceOf", [address]);
         } catch (error) {
@@ -50,7 +51,7 @@ const MyLicenseTokensPage = () => {
     };
 
     const fetchMetadata = async () => {
-        if (!isConnected || !address) {
+        if (!address) {
             setLoading(false);
             setError("Wallet is not connected.");
             return;
@@ -116,23 +117,17 @@ const MyLicenseTokensPage = () => {
     };
 
     useEffect(() => {
-        if (isConnected && address) {
+        if (address) {
             fetchMetadata();
         } else {
             setMetadataList([]);
             setLoading(false);
             setError(null);
         }
-    }, [isConnected, address]);
+    }, [address]);
 
     return (
         <div className="bg-gradient-to-b from-gray-50 to-gray-100 p-8">
-            {!isConnected && (
-                <div className="flex justify-center items-center">
-                    <p className="text-gray-500">Please connect your wallet to view license tokens.</p>
-                </div>
-            )}
-
             {loading && (
                 <div className="flex justify-center items-center">
                     <p className="text-gray-500">Fetching license tokens...</p>
@@ -178,7 +173,7 @@ const MyLicenseTokensPage = () => {
                                     className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        router.push(`my-license-tokens/${metadata.tokenId}/register-derivative`)
+                                        router.push(`/profile/my-license-tokens/${metadata.tokenId}/register-derivative`)
                                     }}
                                 >
                                     Register Derivative
@@ -219,5 +214,3 @@ const MyLicenseTokensPage = () => {
         </div>
     );
 };
-
-export default MyLicenseTokensPage;

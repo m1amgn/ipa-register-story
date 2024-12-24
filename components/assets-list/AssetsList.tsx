@@ -47,7 +47,8 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag, 
       if (nftContract) {
         await fetchIPAssets(nftContract);
       } else {
-        console.error("Can't find NFT collection.");
+        setIsLoading(false);
+        return <p>You don't have account and any assets. Please register new Asset or mint Derivative.</p>;
       }
     } catch (error) {
       console.error("Error in fetching NFT contract", error);
@@ -63,9 +64,10 @@ const IPAssetsList: React.FC<IPAssetsListProps> = ({ address, isDerivativeFlag, 
       const tokensAmount = Number(tokensAmountBigInt);
 
       if (tokensAmount === 0) {
-        setIsLoading(false);
-        setTokensAmount(tokensAmount);
-        setIsAllAssetsChecked(true);
+        setIpAssets([]);
+        setTokensAmount(null);
+        setIsAllAssetsChecked(false);
+        setIsLoading(true);
       }
 
       const assetPromises = Array.from({ length: tokensAmount }, (_, i) =>

@@ -12,6 +12,7 @@ import { getNftContractByAddress } from "@/utils/api-utils/getNftContractByAddre
 import { updateNftContract } from "@/utils/api-utils/updateNftContract";
 import { licenseTokenBurnApproveTransaction } from "@/utils/approve-transactions/licenseTokenBurnApproveTransaction";
 import { derivativeWorkflowsContractAddress } from "@/utils/contracts/derivativeWorkflowsContracts";
+import BackToProfileButton from "@/components/buttons/BackToProfileButton";
 
 
 const RegisterDerivativeWithLicenseTokenPage: React.FC = () => {
@@ -235,7 +236,6 @@ const RegisterDerivativeWithLicenseTokenPage: React.FC = () => {
             console.log("Response:", response);
 
             alert(`Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`);
-            // router.push(`/profile/my-ipa`);
 
         } catch (error: any) {
             console.error("Error in registration IPA:", error);
@@ -248,6 +248,9 @@ const RegisterDerivativeWithLicenseTokenPage: React.FC = () => {
 
     return (
         <div className="bg-gradient-to-b from-gray-50 to-gray-100 p-8">
+            <div className="flex justify-between items-center mb-4">
+                <BackToProfileButton />
+            </div>
             <div className="max-w-lg w-full mx-auto bg-white rounded-lg shadow-lg p-6">
                 {!isConnected || !address ? (
                     <p className="text-center text-gray-500">

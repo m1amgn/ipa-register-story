@@ -1,19 +1,29 @@
+- Make function which save claimed minting fee revenues.
+
+- Make component which show claimed fee revenues.
+
 - Finish claim royalty service. For now is needed track childs and amounts.
 
 - Dynamic fees for minting license tokens by owner. if the address minting is myself, the fee is 0. If its anyone else, its X
 
-- Start to write pay royalty service.
+- Check buttons mint license tokens and make derivative.
+
+- Think about personal license: only owner can mint license tokens and send someone, but anyone can't make derivative directly.
+
+- Check AssetsList, If new user and didn't create contract that should show to new user.
 
 - royaltyPolicy and relationships in derivative
 
-- Check buttons mint license tokens and make derivative.
+- LRP and LAP
+
+- Start to write pay royalty service.
 
 - Make loading+Suspense and error+global error components in app folder.
 
 - Add API KEYS for api get requests
 
-- Think about personal license: only owner can mint license tokens and send someone, but anyone can't make derivative directly.
-
 - Use fetchData.
 
 - Make spinner and whats happening to users.
+
+- Add registration date of IPA.
